@@ -90,8 +90,10 @@ textarea::placeholder{color:#B7A6BB}
 .shake2{animation:shake2 .35s steps(4)}
 @keyframes shake{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
 @keyframes shake2{20%{transform:translateX(-6px) rotate(-6deg)}50%{transform:translateX(6px) rotate(6deg)}80%{transform:translateX(-4px)}}
-.split .hl{transform:translate(-30px,-6px) rotate(-14deg)}
-.split .hr{transform:translate(30px,-6px) rotate(12deg)}
+.cookie-btn .broken{position:absolute;left:50%;top:50%;width:118%;max-width:none;height:auto;image-rendering:pixelated;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
+.split .h{opacity:0;transition:none}
+.split .broken{opacity:1;animation:pop .45s steps(5) both}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.7)}60%{transform:translate(-50%,-50%) scale(1.08)}100%{transform:translate(-50%,-50%) scale(1)}}
 .taps{display:flex;gap:10px;justify-content:center}
 .taps i{width:14px;height:14px;background:var(--panel);box-shadow:0 0 0 2px var(--ink)}
 .taps i.on{background:var(--dough)}
@@ -148,6 +150,7 @@ textarea::placeholder{color:#B7A6BB}
     <button class="cookie-btn" id="cookie" aria-label="쿠키 두드리기">
       <img class="h hl" src="assets/cookie.png" alt="">
       <img class="h hr" src="assets/cookie.png" alt="">
+      <img class="broken" src="assets/cookie-broken.png" alt="">
     </button>
     <div class="taps" id="taps" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="slip pframe" id="slip" hidden>
