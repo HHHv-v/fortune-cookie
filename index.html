@@ -57,7 +57,7 @@ p{margin:0}
 .btn:focus-visible,textarea:focus-visible,.cookie-btn:focus-visible{outline:3px dashed var(--pink);outline-offset:8px}
 
 .rules{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px;text-align:left}
-.rules li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.rules li{word-break:keep-all;display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
 .rules b{display:grid;place-items:center;width:20px;height:20px;margin-top:2px;background:var(--pink);color:var(--ink);font-size:11px;box-shadow:0 0 0 2px var(--ink)}
 /* write */
 .card{width:100%;padding:18px;display:grid;gap:10px;text-align:left}
@@ -117,13 +117,13 @@ textarea::placeholder{color:#B7A6BB}
     <h2 id="t1">다음 사람에게 건넬<br>한 줄을 적어주세요</h2>
     <ol class="rules" aria-label="놀이 규칙">
       <li><b>1</b><span>따뜻하고 긍정적인 말만 적어요.</span></li>
-      <li><b>2</b><span>모르는 다음 사람에게 건넬 한 줄을 적어요. 이름은 남지 않아요.</span></li>
-      <li><b>3</b><span>내가 쓴 쿠키는 나에게 돌아오지 않아요. 대신 다른 사람의 한 줄을 받아요.</span></li>
+      <li><b>2</b><span>모르는 사람에게 건넬 한 줄을 적어요.</span></li>
+      <li><b>3</b><span>내가 쓴 쿠키는 나에게 돌아오지 않아요.</span></li>
     </ol>
     <div class="card pframe">
       <label class="label" for="line">나의 한 줄</label>
-      <textarea id="line" maxlength="60" placeholder="예) 맛있는 걸 먹으면 오늘의 운이 두 배가 됩니다."></textarea>
-      <div class="row"><span class="count" id="count">0 / 60</span></div>
+      <textarea id="line" maxlength="100" placeholder="예) 맛있는 걸 먹으면 오늘의 운이 두 배가 됩니다."></textarea>
+      <div class="row"><span class="count" id="count">0 / 100</span></div>
     </div>
     <p class="msg" id="putMsg" role="status"></p>
     <button class="btn" id="put" disabled>쿠키에 넣기</button>
@@ -212,9 +212,9 @@ textarea::placeholder{color:#B7A6BB}
   /* ---------- 1. 쓰기 ---------- */
   const line=$('line'), put=$('put');
   let justPut=null; const seen=[];
-  line.addEventListener('input',()=>{ $('count').textContent=line.value.length+' / 60'; put.disabled=line.value.trim().length<2; });
+  line.addEventListener('input',()=>{ $('count').textContent=line.value.length+' / 100'; put.disabled=line.value.trim().length<2; });
   put.addEventListener('click',async()=>{
-    const text=line.value.trim().replace(/\s+/g,' ').slice(0,60);
+    const text=line.value.trim().replace(/\s+/g,' ').slice(0,100);
     if(text.length<2) return;
     put.disabled=true; $('putMsg').textContent='쿠키 속에 돌돌 말아 넣는 중…';
     try{
@@ -225,7 +225,7 @@ textarea::placeholder{color:#B7A6BB}
       $('putMsg').textContent = e && e.error==='jar_full' ? '항아리가 가득 찼어요.' : '넣지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
       return;
     }
-    line.value=''; $('count').textContent='0 / 60'; $('putMsg').textContent='';
+    line.value=''; $('count').textContent='0 / 100'; $('putMsg').textContent='';
     resetCrack(); show(2);
   });
 

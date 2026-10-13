@@ -6,7 +6,7 @@ const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TO
 const redis = url && token ? new Redis({ url, token }) : null;
 
 const KEY = "fortune:cookies";
-const MAX_LEN = 60;
+const MAX_LEN = 100;
 const MAX_COOKIES = 5000;
 
 function clean(text) {
