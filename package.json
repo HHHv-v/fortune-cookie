@@ -1,0 +1,10 @@
+{
+  "name": "fortune-cookie",
+  "version": "1.0.0",
+  "private": true,
+  "description": "우연놀이-포춘쿠키: 모르는 사람의 한 줄을 무작위로 꺼내는 참여형 작품",
+  "type": "module",
+  "dependencies": {
+    "@upstash/redis": "1.34.3"
+  }
+}

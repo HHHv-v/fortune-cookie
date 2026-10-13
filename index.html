@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="모르는 사람이 남긴 한 줄을 포춘쿠키로 무작위로 꺼내는 우연놀이">
+<link rel="icon" href="assets/cookie.png">
+<title>우연놀이-포춘쿠키</title>
+<style>
+/* Layout: 한 화면에 한 장면만. 시작 → 쓰기 → 깨기, 화면 가운데 작은 게임기 창 하나. */
+@font-face{font-family:"Galmuri11";src:url("assets/Galmuri11.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Galmuri11";src:url("assets/Galmuri11-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{
+  --bg:#FBE6EC; --dot:#F3CBD6; --panel:#FFF8EA; --ink:#2A1B3D; --muted:#7A6680;
+  --dough:#F2A93B; --dough-dark:#C8711F; --pink:#F48FA0; --mint:#9BDCC6;
+  --px:4px;
+  --pixel:"Galmuri11", "Apple SD Gothic Neo", "Malgun Gothic", monospace;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--pixel);font-size:13px;line-height:1.7;
+  -webkit-font-smoothing:none;font-smooth:never;
+  background-image:radial-gradient(var(--dot) 1.5px, transparent 1.6px);background-size:16px 16px}
+*{box-sizing:border-box}
+.app{min-height:100%;display:grid;place-items:center;padding-block:24px;padding-inline:16px}
+.screen{width:100%;max-width:420px;display:grid;justify-items:center;gap:18px;text-align:center}
+[hidden]{display:none!important}
+.enter{animation:enter .35s steps(5) both}
+@keyframes enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* pixel frame: notched corners via 4-way shadow */
+.pframe{background:var(--panel);
+  box-shadow:0 calc(-1*var(--px)) 0 0 var(--ink),0 var(--px) 0 0 var(--ink),calc(-1*var(--px)) 0 0 0 var(--ink),var(--px) 0 0 0 var(--ink),
+             var(--px) calc(2*var(--px)) 0 0 rgba(42,27,61,.18)}
+.steps{display:flex;gap:8px;justify-content:center}
+.steps i{width:10px;height:10px;background:var(--panel);box-shadow:0 0 0 2px var(--ink)}
+.steps i.on{background:var(--pink)}
+.label{font-size:11px;color:var(--muted);letter-spacing:.08em}
+h1{font-weight:700;font-size:33px;line-height:1.25;margin:0;letter-spacing:-.01em}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--pink);letter-spacing:.2em;margin-bottom:6px}
+h2{font-weight:700;font-size:22px;line-height:1.4;margin:0;text-wrap:balance}
+p{margin:0}
+.muted{color:var(--muted)}
+.cookie-img{image-rendering:pixelated;display:block;width:min(240px,62vw);height:auto;max-width:100%}
+.bob{animation:bob 1.6s steps(4) infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.jar{font-size:13px}
+.jar b{color:var(--dough-dark)}
+
+.btn{font:inherit;font-family:var(--pixel);font-weight:700;font-size:16px;color:var(--ink);background:var(--dough);border:0;border-radius:0;
+  padding:12px 28px;cursor:pointer;
+  box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),inset 0 -4px 0 0 var(--dough-dark),4px 8px 0 0 rgba(42,27,61,.25)}
+.btn:hover:not(:disabled){filter:brightness(1.06)}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),inset 0 4px 0 0 var(--dough-dark)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sub{background:var(--panel);font-size:13px;padding:9px 18px;box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink)}
+.btn:focus-visible,textarea:focus-visible,.cookie-btn:focus-visible{outline:3px dashed var(--pink);outline-offset:8px}
+
+/* write */
+.card{width:100%;padding:18px;display:grid;gap:10px;text-align:left}
+textarea{width:100%;resize:none;font:inherit;font-family:var(--pixel);font-size:16px;line-height:1.7;color:var(--ink);
+  background:#fff;border:0;border-radius:0;padding:12px;min-height:112px;box-shadow:inset 0 0 0 2px var(--ink)}
+textarea::placeholder{color:#B7A6BB}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.count{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.msg{min-height:1.7em;font-size:12px;color:var(--muted)}
+
+/* crack */
+.cookie-btn{position:relative;background:none;border:0;padding:0;cursor:pointer;width:min(260px,68vw);max-width:100%;aspect-ratio:560/451}
+.cookie-btn:disabled{cursor:default}
+.cookie-btn .h{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;transition:transform .5s steps(6)}
+.cookie-btn .hl{clip-path:polygon(0 0,44% 0,46% 14%,48% 60%,44% 100%,0 100%)}
+.cookie-btn .hr{clip-path:polygon(44% 0,100% 0,100% 100%,44% 100%,48% 60%,46% 14%)}
+.shake1{animation:shake .3s steps(3)}
+.shake2{animation:shake2 .35s steps(4)}
+@keyframes shake{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+@keyframes shake2{20%{transform:translateX(-6px) rotate(-6deg)}50%{transform:translateX(6px) rotate(6deg)}80%{transform:translateX(-4px)}}
+.split .hl{transform:translate(-30px,-6px) rotate(-14deg)}
+.split .hr{transform:translate(30px,-6px) rotate(12deg)}
+.taps{display:flex;gap:10px;justify-content:center}
+.taps i{width:14px;height:14px;background:var(--panel);box-shadow:0 0 0 2px var(--ink)}
+.taps i.on{background:var(--dough)}
+.crumb{position:absolute;width:8px;height:8px;background:var(--dough);box-shadow:0 0 0 2px var(--ink);pointer-events:none;animation:crumb .6s steps(6) forwards}
+@keyframes crumb{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+
+.slip{width:100%;margin-top:6px;padding:22px 18px 14px;text-align:center;display:grid;gap:14px;animation:slip .5s steps(6) both}
+@keyframes slip{from{clip-path:inset(-12px 100% -12px -12px)}to{clip-path:inset(-12px -12px -12px -12px)}}
+.slip-text{font-size:16px;line-height:1.8;overflow-wrap:anywhere;text-wrap:balance}
+.slip-foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);
+  border-top:2px dashed var(--pink);padding-top:10px;font-variant-numeric:tabular-nums}
+.heart{color:var(--pink)}
+.note{font-size:11px;color:var(--muted);max-width:32ch}
+.actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding-top:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<main class="app">
+  <!-- 0. 시작 -->
+  <section class="screen enter" id="s0" aria-labelledby="t0">
+    <span class="label">인터랙티브 미디어 창작 · 우연놀이</span>
+    <img class="cookie-img bob" src="assets/cookie.png" alt="쪽지가 삐져나온 포춘쿠키">
+    <h1 id="t0"><small>FORTUNE COOKIE</small>우연놀이-포춘쿠키</h1>
+    <p class="muted">모르는 누군가의 한 줄이<br>오늘 당신의 운세가 됩니다.</p>
+    <p class="jar">항아리 속 쿠키 <b id="jarCount">–</b>개</p>
+    <button class="btn" id="start">시작하기 ▶</button>
+  </section>
+
+  <!-- 1. 쓰기 -->
+  <section class="screen" id="s1" hidden aria-labelledby="t1">
+    <div class="steps" aria-hidden="true"><i class="on"></i><i></i></div>
+    <h2 id="t1">다음 사람에게 건넬<br>한 줄을 적어주세요</h2>
+    <p class="muted">이름은 남지 않아요. 누가 받을지도 몰라요.</p>
+    <div class="card pframe">
+      <label class="label" for="line">나의 한 줄</label>
+      <textarea id="line" maxlength="60" placeholder="예) 오늘 미룬 일은 내일의 당신이 생각보다 잘 해냅니다."></textarea>
+      <div class="row"><span class="count" id="count">0 / 60</span></div>
+    </div>
+    <p class="msg" id="putMsg" role="status"></p>
+    <button class="btn" id="put" disabled>쿠키에 넣기</button>
+  </section>
+
+  <!-- 2. 깨기 -->
+  <section class="screen" id="s2" hidden aria-labelledby="t2">
+    <div class="steps" aria-hidden="true"><i class="on"></i><i class="on"></i></div>
+    <h2 id="t2">포춘쿠키를 깨 보세요</h2>
+    <p class="muted" id="crackHint">쿠키를 세 번 톡톡 두드리면 열려요.</p>
+    <button class="cookie-btn" id="cookie" aria-label="쿠키 두드리기">
+      <img class="h hl" src="assets/cookie.png" alt="">
+      <img class="h hr" src="assets/cookie.png" alt="">
+    </button>
+    <div class="taps" id="taps" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="slip pframe" id="slip" hidden>
+      <p class="slip-text" id="slipText"></p>
+      <div class="slip-foot"><span id="lucky"></span><span id="serial"></span></div>
+    </div>
+    <p class="note" id="after" hidden>누군가 당신을 모른 채 쓴 문장이에요.<br>지금의 당신에게는 어떻게 읽히나요? <span class="heart">♥</span></p>
+    <div class="actions" id="actions" hidden>
+      <button class="btn sub" id="home">처음으로</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const screens=[$('s0'),$('s1'),$('s2')];
+  function show(i){
+    screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- 방문자 ID (로그인 없이 내 쿠키를 구분) ---------- */
+  const shared=location.hash==='#shared';
+  let visitor='';
+  try{ visitor=localStorage.getItem('fc-visitor')||''; }catch(e){}
+  if(!visitor){ visitor=Math.random().toString(36).slice(2)+Date.now().toString(36); try{localStorage.setItem('fc-visitor',visitor);}catch(e){} }
+
+  /* ---------- 저장소: Claude 미리보기(db) → Vercel(api) → 이 기기만(local) ---------- */
+  const newId=()=>'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  function choose(all,justPut,seen){
+    const pool=all.filter(c=>shared ? c.id!==justPut : (c.id!==justPut && c.v!==visitor));
+    if(!pool.length) return {empty:true};
+    const fresh=pool.filter(c=>!seen.includes(c.id));
+    const from=fresh.length?fresh:pool;
+    return from[Math.floor(Math.random()*from.length)];
+  }
+  const localStore={ items:[],
+    async count(){return this.items.length},
+    async put(text){const id=newId(); this.items.push({id,text,v:visitor,t:Date.now()}); return {id,count:this.items.length}},
+    async draw(justPut,seen){return choose(this.items.map((c,i)=>({...c,no:i+1})),justPut,seen)} };
+  const apiStore={
+    async count(){const r=await fetch('/api/cookies',{cache:'no-store'}); if(!r.ok) throw r; return (await r.json()).count},
+    async put(text){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,v:visitor})});
+      const d=await r.json(); if(!r.ok) throw d; return d},
+    async draw(justPut,seen){const q=new URLSearchParams({draw:'1',exclude:justPut||'',v:visitor,shared:shared?'1':'0',seen:seen.slice(-50).join(',')});
+      const r=await fetch('/api/cookies?'+q,{cache:'no-store'}); if(!r.ok) throw r; return r.json()} };
+  function dbStore(db){
+    let all=[];
+    const col=db.collection('cookies');
+    col.limit(1000).onSnapshot(s=>{ all=s.docs.map(d=>({id:d.id,...d.data()})).filter(c=>typeof c.text==='string').sort((a,b)=>a.t-b.t); setJar(all.length); },()=>{});
+    return {
+      async count(){return all.length},
+      async put(text){const id=newId(); await col.doc(id).set({text,v:visitor,t:Date.now()}); if(!all.some(c=>c.id===id)) all.push({id,text,v:visitor,t:Date.now()}); return {id,count:all.length}},
+      async draw(justPut,seen){return choose(all.map((c,i)=>({...c,no:i+1})),justPut,seen)} };
+  }
+
+  let store=localStore;
+  const setJar=n=>{$('jarCount').textContent=n};
+  async function pickStore(){
+    if(window.claude && window.claude.use){
+      const db=await window.claude.use('db').catch(()=>null);
+      if(db){ store=dbStore(db); return; }
+    }
+    try{ setJar(await apiStore.count()); store=apiStore; setInterval(()=>{ if(!document.hidden && !screens[0].hidden) apiStore.count().then(setJar).catch(()=>{}); },5000); }
+    catch(e){ store=localStore; setJar(0); }
+  }
+  pickStore();
+
+  /* ---------- 0 → 1 ---------- */
+  $('start').addEventListener('click',()=>{ show(1); setTimeout(()=>$('line').focus(),50); });
+
+  /* ---------- 1. 쓰기 ---------- */
+  const line=$('line'), put=$('put');
+  let justPut=null; const seen=[];
+  line.addEventListener('input',()=>{ $('count').textContent=line.value.length+' / 60'; put.disabled=line.value.trim().length<2; });
+  put.addEventListener('click',async()=>{
+    const text=line.value.trim().replace(/\s+/g,' ').slice(0,60);
+    if(text.length<2) return;
+    put.disabled=true; $('putMsg').textContent='쿠키 속에 돌돌 말아 넣는 중…';
+    try{
+      const d=await store.put(text);
+      justPut=d.id; if(d.count!=null) setJar(d.count);
+    }catch(e){
+      put.disabled=false;
+      $('putMsg').textContent = e && e.error==='jar_full' ? '항아리가 가득 찼어요.' : '넣지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
+      return;
+    }
+    line.value=''; $('count').textContent='0 / 60'; $('putMsg').textContent='';
+    resetCrack(); show(2);
+  });
+
+  /* ---------- 2. 깨기 ---------- */
+  const cookie=$('cookie'); let taps=0, busy=false;
+  function resetCrack(){
+    taps=0; busy=false; cookie.disabled=false; cookie.classList.remove('split','shake1','shake2');
+    [...$('taps').children].forEach(i=>i.classList.remove('on'));
+    $('slip').hidden=true; $('after').hidden=true; $('actions').hidden=true; $('taps').hidden=false;
+    $('crackHint').textContent='쿠키를 세 번 톡톡 두드리면 열려요.';
+  }
+  function crumbs(n){
+    const r=cookie.getBoundingClientRect();
+    for(let k=0;k<n;k++){
+      const c=document.createElement('i'); c.className='crumb';
+      c.style.left=(r.width*(.35+Math.random()*.3))+'px'; c.style.top=(r.height*(.3+Math.random()*.3))+'px';
+      c.style.setProperty('--dx',(Math.random()*120-60)+'px'); c.style.setProperty('--dy',(Math.random()*80+20)+'px');
+      cookie.appendChild(c); setTimeout(()=>c.remove(),700);
+    }
+  }
+  function lucky(){const s=new Set(); while(s.size<6) s.add(1+Math.floor(Math.random()*45)); return [...s].sort((a,b)=>a-b).map(n=>String(n).padStart(2,'0')).join(' ');}
+
+  cookie.addEventListener('click',async()=>{
+    if(busy||cookie.disabled) return;
+    taps++;
+    $('taps').children[taps-1].classList.add('on');
+    cookie.classList.remove('shake1','shake2'); void cookie.offsetWidth;
+    if(taps<3){ cookie.classList.add(taps===1?'shake1':'shake2'); crumbs(taps*2); $('crackHint').textContent=taps===1?'톡…':'톡톡… 금이 가요!'; return; }
+    busy=true; $('crackHint').textContent='쩍!';
+    let pick;
+    try{ pick=await store.draw(justPut,seen); }
+    catch(e){ busy=false; taps=2; $('taps').children[2].classList.remove('on'); $('crackHint').textContent='꺼내지 못했어요. 한 번 더 두드려 주세요.'; return; }
+    if(pick.empty){
+      busy=false; taps=2; $('taps').children[2].classList.remove('on'); cookie.classList.add('shake2');
+      $('crackHint').textContent='항아리에 아직 다른 사람의 쿠키가 없어요. 다음 사람이 넣고 나면 다시 두드려 주세요.'; $('actions').hidden=false;
+      return;
+    }
+    seen.push(pick.id);
+    crumbs(8); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
+    setTimeout(()=>{
+      $('slipText').textContent=pick.text;
+      $('lucky').textContent='행운의 숫자 '+lucky();
+      $('serial').textContent='No.'+String(pick.no).padStart(3,'0');
+      $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false;
+      $('crackHint').textContent='쪽지가 나왔어요!';
+    }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
+  });
+
+  $('home').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
+})();
+</script>
+
+</body>
+</html>
