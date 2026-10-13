@@ -105,21 +105,6 @@ fortune-cookie/
 - `shared=1`: 공용 기기 모드 (방문자 ID로 제외하지 않음)
 - 오류: `400 too_short`, `409 jar_full`(최대 5,000개), `503 storage_not_configured`
 
-## 배포 방법
-
-1. Vercel → **Add New → Project** → 이 레포를 Import → **Deploy** (설정 변경 없음)
-2. 프로젝트의 **Storage** 탭 → **Upstash for Redis** 생성 → 이 프로젝트에 **Connect**
-3. **Deployments** → 최신 배포 → **Redeploy** (환경변수 반영)
-
-`KV_REST_API_URL` / `KV_REST_API_TOKEN` (또는 `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`) 환경변수가 자동으로 연결됩니다.
-
-> 저장소가 연결되지 않았거나 `index.html`을 파일로 직접 열면, 쿠키가 그 기기에서만 모이는 **로컬 모드**로 동작합니다.
-
-## 운영 팁
-
-- **수업 전 준비**: 항아리에 5~6개의 한 줄을 미리 넣어 두면 첫 관객도 바로 쿠키를 깰 수 있습니다.
-- **항아리 비우기**: Upstash 콘솔의 Data Browser에서 `fortune:cookies` 키를 삭제합니다.
-- **카카오톡 미리보기 갱신**: [카카오 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 주소를 넣고 캐시를 초기화합니다.
 
 ## 만든 사람
 
