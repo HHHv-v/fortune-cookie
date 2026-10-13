@@ -73,6 +73,8 @@ p{margin:0}
 .rules b{display:grid;place-items:center;width:20px;height:20px;margin-top:2px;background:var(--pink);color:var(--ink);font-size:11px;box-shadow:0 0 0 2px var(--ink)}
 /* decorations */
 .deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.deco{display:none}
+body[data-screen="1"] .deco,body[data-screen="2"] .deco{display:block}
 .deco img{position:absolute;image-rendering:pixelated;width:var(--s,32px);height:auto;animation:float 2.4s steps(4) infinite;animation-delay:var(--d,0s)}
 @keyframes float{50%{transform:translateY(-10px)}}
 .app{position:relative;z-index:1}
@@ -185,6 +187,7 @@ textarea::placeholder{color:#B7A6BB}
   const screens=[$('s0'),$('s1'),$('s2')];
   function show(i){
     screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
+    document.body.dataset.screen=i;
     window.scrollTo(0,0);
   }
 
