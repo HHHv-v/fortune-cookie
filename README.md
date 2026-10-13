@@ -9,10 +9,11 @@
 🔗 **https://fortune-cookie-peach.vercel.app**
 
 <p align="center">
-  <img src="docs/01-start.png" width="200" alt="시작 화면">
-  <img src="docs/02-write.png" width="200" alt="한 줄 쓰기 화면">
-  <img src="docs/03-crack.png" width="200" alt="쿠키 깨기 화면">
-  <img src="docs/04-result.png" width="200" alt="쪽지 결과 화면">
+  <img src="docs/01-start.png" width="160" alt="시작 화면">
+  <img src="docs/02-write.png" width="160" alt="한 줄 쓰기 화면">
+  <img src="docs/03-jar.png" width="160" alt="항아리 화면">
+  <img src="docs/04-crack.png" width="160" alt="쿠키 깨기 화면">
+  <img src="docs/05-result.png" width="160" alt="쪽지 결과 화면">
 </p>
 
 ---
@@ -31,8 +32,9 @@
 |---|---|---|
 | 1 | 시작 | 통통 튀는 포춘쿠키를 보고 **시작하기**를 누릅니다. |
 | 2 | 한 줄 쓰기 | 모르는 다음 사람에게 건넬 한 줄(최대 100자)을 적고 **쿠키에 넣기**를 누릅니다. |
-| 3 | 쿠키 깨기 | 쿠키를 **세 번 톡톡** 두드립니다. 두드릴 때마다 흔들리며 금이 갑니다. |
-| 4 | 쪽지 | 쿠키가 갈라지며 다른 사람의 한 줄이 담긴 쪽지가 나옵니다. |
+| 3 | 항아리 | 내 쿠키가 항아리에 쏙 떨어지며 다른 사람들의 쿠키와 섞입니다. (자동으로 넘어감) |
+| 4 | 쿠키 깨기 | 쿠키를 **세 번 톡톡** 두드립니다. 두드릴 때마다 흔들리며 금이 갑니다. |
+| 5 | 쪽지 | 쿠키가 갈라지며 다른 사람의 한 줄이 담긴 쪽지가 나옵니다. |
 
 ### 규칙
 
@@ -75,12 +77,13 @@
 
 ```
 fortune-cookie/
-├── index.html              # 화면 전체 (시작 → 쓰기 → 깨기)
+├── index.html              # 화면 전체 (시작 → 쓰기 → 항아리 → 깨기)
 ├── api/
 │   └── cookies.js          # 쿠키 저장 · 개수 · 무작위 뽑기 API
 ├── assets/
 │   ├── cookie.png          # 포춘쿠키 픽셀 이미지
 │   ├── cookie-broken.png   # 깨진 포춘쿠키 이미지
+│   ├── jar.png             # 쿠키 항아리 이미지
 │   ├── icon-*.png          # 장식 아이콘 (하트 · 별 · 클로버 · 반짝이)
 │   ├── favicon*.png        # 파비콘 · 홈 화면 아이콘
 │   ├── og.png              # 링크 미리보기 이미지 (1200×630)

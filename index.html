@@ -74,7 +74,7 @@ p{margin:0}
 /* decorations */
 .deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .deco{display:none}
-body[data-screen="1"] .deco,body[data-screen="2"] .deco{display:block}
+body[data-screen="1"] .deco,body[data-screen="2"] .deco,body[data-screen="3"] .deco{display:block}
 .deco img{position:absolute;image-rendering:pixelated;width:var(--s,32px);height:auto;animation:float 2.4s steps(4) infinite;animation-delay:var(--d,0s)}
 @keyframes float{50%{transform:translateY(-10px)}}
 .app{position:relative;z-index:1}
@@ -89,6 +89,16 @@ textarea::placeholder{color:#B7A6BB}
 .count{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
 .msg{min-height:1.7em;font-size:12px;color:var(--muted)}
 
+/* jar */
+.jar-stage{position:relative;width:min(220px,58vw);aspect-ratio:440/493;max-width:100%}
+.jar-stage .jar-img{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.jar-stage .drop{position:absolute;left:50%;top:-30%;width:34%;image-rendering:pixelated;transform:translateX(-50%);opacity:0}
+.dropping .drop{animation:drop .8s steps(8) .15s forwards}
+@keyframes drop{0%{top:-40%;opacity:1;transform:translateX(-50%) rotate(-20deg)}75%{top:-4%;opacity:1;transform:translateX(-50%) rotate(10deg) scale(.9)}100%{top:6%;opacity:0;transform:translateX(-50%) rotate(15deg) scale(.6)}}
+.dropping .jar-img{animation:land .3s steps(3) .9s}
+@keyframes land{40%{transform:translateY(5px) scaleY(.97)}}
+.mixing{font-size:13px;color:var(--muted)}
+.mixing b{color:var(--dough-dark)}
 /* crack */
 .cookie-btn{position:relative;background:none;border:0;padding:0;cursor:pointer;width:min(260px,68vw);max-width:100%;aspect-ratio:560/451}
 .cookie-btn:disabled{cursor:default}
@@ -159,6 +169,16 @@ textarea::placeholder{color:#B7A6BB}
     <button class="btn" id="put" disabled>쿠키에 넣기</button>
   </section>
 
+  <!-- 1.5 항아리 -->
+  <section class="screen" id="sJ" hidden aria-labelledby="tJ">
+    <h2 id="tJ">항아리에 쏙!</h2>
+    <div class="jar-stage" id="jarStage">
+      <img class="jar-img" src="assets/jar.png" alt="포춘쿠키가 가득 든 유리 항아리">
+      <img class="drop" src="assets/cookie.png" alt="">
+    </div>
+    <p class="mixing">항아리 속 쿠키 <b id="jarCount2">–</b>개<br>모르는 사람들의 쿠키와 섞는 중…</p>
+  </section>
+
   <!-- 2. 깨기 -->
   <section class="screen" id="s2" hidden aria-labelledby="t2">
     <div class="steps" aria-hidden="true"><i class="on"></i><i class="on"></i></div>
@@ -184,7 +204,7 @@ textarea::placeholder{color:#B7A6BB}
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const screens=[$('s0'),$('s1'),$('s2')];
+  const screens=[$('s0'),$('s1'),$('sJ'),$('s2')];
   function show(i){
     screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
     document.body.dataset.screen=i;
@@ -227,7 +247,7 @@ textarea::placeholder{color:#B7A6BB}
   }
 
   let store=localStore;
-  const setJar=n=>{$('jarCount').textContent=n};
+  const setJar=n=>{$('jarCount').textContent=n; $('jarCount2').textContent=n};
   async function pickStore(){
     if(window.claude && window.claude.use){
       const db=await window.claude.use('db').catch(()=>null);
@@ -259,6 +279,9 @@ textarea::placeholder{color:#B7A6BB}
     }
     line.value=''; $('count').textContent='0 / 100'; $('putMsg').textContent='';
     resetCrack(); show(2);
+    const st=$('jarStage'); st.classList.remove('dropping'); void st.offsetWidth; st.classList.add('dropping');
+    const quick=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(()=>{ st.classList.remove('dropping'); show(3); }, quick?900:1900);
   });
 
   /* ---------- 2. 깨기 ---------- */
