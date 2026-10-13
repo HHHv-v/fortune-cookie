@@ -71,6 +71,13 @@ p{margin:0}
 .rules{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px;text-align:left}
 .rules li{word-break:keep-all;display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
 .rules b{display:grid;place-items:center;width:20px;height:20px;margin-top:2px;background:var(--pink);color:var(--ink);font-size:11px;box-shadow:0 0 0 2px var(--ink)}
+/* decorations */
+.deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.deco img{position:absolute;image-rendering:pixelated;width:var(--s,32px);height:auto;animation:float 2.4s steps(4) infinite;animation-delay:var(--d,0s)}
+@keyframes float{50%{transform:translateY(-10px)}}
+.app{position:relative;z-index:1}
+.burst{position:absolute;left:50%;top:45%;width:30px;image-rendering:pixelated;pointer-events:none;animation:burst .9s steps(8) forwards}
+@keyframes burst{0%{transform:translate(-50%,-50%) scale(.4);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.1);opacity:0}}
 /* write */
 .card{width:100%;padding:18px;display:grid;gap:10px;text-align:left}
 textarea{width:100%;resize:none;font:inherit;font-family:var(--pixel);font-size:16px;line-height:1.7;color:var(--ink);
@@ -114,6 +121,14 @@ textarea::placeholder{color:#B7A6BB}
 <body>
 
 
+<div class="deco" aria-hidden="true">
+  <img src="assets/icon-heart.png" alt="" style="left:5%;top:9%;--s:30px">
+  <img src="assets/icon-sparkle.png" alt="" style="right:7%;top:6%;--s:26px;--d:.6s">
+  <img src="assets/icon-star.png" alt="" style="right:4%;top:44%;--s:34px;--d:1.2s">
+  <img src="assets/icon-clover.png" alt="" style="left:3%;top:52%;--s:32px;--d:.3s">
+  <img src="assets/icon-sparkle.png" alt="" style="left:9%;bottom:10%;--s:22px;--d:.9s">
+  <img src="assets/icon-heart.png" alt="" style="right:8%;bottom:7%;--s:26px;--d:1.5s">
+</div>
 <main class="app">
   <!-- 0. 시작 -->
   <section class="screen enter" id="s0" aria-labelledby="t0">
@@ -260,6 +275,15 @@ textarea::placeholder{color:#B7A6BB}
       cookie.appendChild(c); setTimeout(()=>c.remove(),700);
     }
   }
+  const ICONS=['assets/icon-heart.png','assets/icon-star.png','assets/icon-clover.png','assets/icon-sparkle.png'];
+  function burst(){
+    for(let k=0;k<8;k++){
+      const im=document.createElement('img'); im.className='burst'; im.alt=''; im.src=ICONS[k%4];
+      const a=-Math.PI*(.1+.8*k/7), r=110+Math.random()*50;
+      im.style.setProperty('--dx',Math.cos(a)*r+'px'); im.style.setProperty('--dy',Math.sin(a)*r+'px');
+      cookie.appendChild(im); setTimeout(()=>im.remove(),1000);
+    }
+  }
   function lucky(){const s=new Set(); while(s.size<6) s.add(1+Math.floor(Math.random()*45)); return [...s].sort((a,b)=>a-b).map(n=>String(n).padStart(2,'0')).join(' ');}
 
   cookie.addEventListener('click',async()=>{
@@ -278,7 +302,7 @@ textarea::placeholder{color:#B7A6BB}
       return;
     }
     seen.push(pick.id);
-    crumbs(8); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
+    crumbs(6); burst(); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
     setTimeout(()=>{
       $('slipText').textContent=pick.text;
       $('lucky').textContent='행운의 숫자 '+lucky();
