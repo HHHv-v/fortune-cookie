@@ -56,6 +56,9 @@ p{margin:0}
 .btn.sub{background:var(--panel);font-size:13px;padding:9px 18px;box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink)}
 .btn:focus-visible,textarea:focus-visible,.cookie-btn:focus-visible{outline:3px dashed var(--pink);outline-offset:8px}
 
+.rules{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px;text-align:left}
+.rules li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.rules b{display:grid;place-items:center;width:20px;height:20px;margin-top:2px;background:var(--pink);color:var(--ink);font-size:11px;box-shadow:0 0 0 2px var(--ink)}
 /* write */
 .card{width:100%;padding:18px;display:grid;gap:10px;text-align:left}
 textarea{width:100%;resize:none;font:inherit;font-family:var(--pixel);font-size:16px;line-height:1.7;color:var(--ink);
@@ -112,7 +115,11 @@ textarea::placeholder{color:#B7A6BB}
   <section class="screen" id="s1" hidden aria-labelledby="t1">
     <div class="steps" aria-hidden="true"><i class="on"></i><i></i></div>
     <h2 id="t1">다음 사람에게 건넬<br>한 줄을 적어주세요</h2>
-    <p class="muted">이름은 남지 않아요. 누가 받을지도 몰라요.</p>
+    <ol class="rules" aria-label="놀이 규칙">
+      <li><b>1</b><span>따뜻하고 긍정적인 말만 적어요.</span></li>
+      <li><b>2</b><span>모르는 다음 사람에게 건넬 한 줄을 적어요. 이름은 남지 않아요.</span></li>
+      <li><b>3</b><span>내가 쓴 쿠키는 나에게 돌아오지 않아요. 대신 다른 사람의 한 줄을 받아요.</span></li>
+    </ol>
     <div class="card pframe">
       <label class="label" for="line">나의 한 줄</label>
       <textarea id="line" maxlength="60" placeholder="예) 맛있는 걸 먹으면 오늘의 운이 두 배가 됩니다."></textarea>
