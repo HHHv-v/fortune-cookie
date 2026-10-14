@@ -132,6 +132,8 @@ textarea::placeholder{color:#B7A6BB}
 .heart{color:var(--pink)}
 .note{font-size:11px;color:var(--muted);max-width:32ch}
 .actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding-top:4px}
+#s2 .actions .btn{font-size:15px;padding:11px 22px}
+.toast{min-height:1.6em;font-size:12px;color:var(--muted);margin:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -214,7 +216,9 @@ textarea::placeholder{color:#B7A6BB}
     <p class="note" id="after" hidden>누군가 당신을 모른 채 쓴 문장이에요.<br>지금의 당신에게는 어떻게 읽히나요? <span class="heart">♥</span></p>
     <div class="actions" id="actions" hidden>
       <button class="btn sub" id="home">처음으로</button>
+      <button class="btn" id="share" hidden>공유하기</button>
     </div>
+    <p class="toast" id="shareMsg" role="status"></p>
   </section>
 </main>
 
@@ -312,7 +316,7 @@ textarea::placeholder{color:#B7A6BB}
   function resetCrack(){
     taps=0; busy=false; cookie.disabled=false; cookie.classList.remove('split','shake1','shake2');
     [...$('taps').children].forEach(i=>i.classList.remove('on'));
-    $('slip').hidden=true; $('after').hidden=true; $('actions').hidden=true; $('taps').hidden=false;
+    $('slip').hidden=true; $('after').hidden=true; $('actions').hidden=true; $('share').hidden=true; $('shareMsg').textContent=''; $('taps').hidden=false;
     $('crackHint').textContent='쿠키를 세 번 톡톡 두드리면 열려요.';
   }
   function crumbs(n){
@@ -333,6 +337,71 @@ textarea::placeholder{color:#B7A6BB}
       cookie.appendChild(im); setTimeout(()=>im.remove(),1000);
     }
   }
+  /* ---------- 공유하기: 쪽지를 픽셀 카드 이미지로 ---------- */
+  const SITE='https://fortune-cookie-peach.vercel.app';
+  function wrapLines(ctx,text,maxW){
+    const out=[]; let line='';
+    for(const word of text.split(' ')){
+      const t=line?line+' '+word:word;
+      if(ctx.measureText(t).width<=maxW){ line=t; continue; }
+      if(line) out.push(line);
+      if(ctx.measureText(word).width<=maxW){ line=word; continue; }
+      line='';
+      for(const ch of word){ if(ctx.measureText(line+ch).width>maxW){ out.push(line); line=ch; } else line+=ch; }
+    }
+    if(line) out.push(line);
+    return out;
+  }
+  async function makeCard(){
+    const W=1080,H=1350, c=document.createElement('canvas'); c.width=W; c.height=H;
+    const x=c.getContext('2d'); x.imageSmoothingEnabled=false;
+    try{ await document.fonts.load('700 40px Galmuri11'); await document.fonts.load('400 40px Galmuri11'); }catch(e){}
+    const F='"Galmuri11", monospace', INK='#2A1B3D';
+    x.fillStyle='#FBE6EC'; x.fillRect(0,0,W,H);
+    x.fillStyle='#F3CBD6'; for(let yy=20;yy<H;yy+=40) for(let xx=20;xx<W;xx+=40){ x.beginPath(); x.arc(xx,yy,4,0,7); x.fill(); }
+    x.textAlign='center'; x.fillStyle='#F48FA0'; x.font='400 30px '+F; x.fillText('FORTUNE COOKIE',W/2,130);
+    x.fillStyle=INK; x.font='700 72px '+F; x.fillText('낯선 포춘쿠키',W/2,215);
+    const img=document.querySelector('.cookie-btn .broken');
+    if(img && img.complete){ const iw=640, ih=iw*img.naturalHeight/img.naturalWidth; x.drawImage(img,(W-iw)/2,270,iw,ih); }
+    // slip
+    const sx=110, sw=W-220; x.font='400 46px '+F;
+    const lines=wrapLines(x,$('slipText').textContent,sw-120).slice(0,6);
+    const lh=76, sh=150+lines.length*lh, sy=720;
+    x.fillStyle='rgba(42,27,61,.2)'; x.fillRect(sx+16,sy+22,sw,sh);
+    x.fillStyle=INK; x.fillRect(sx-8,sy,sw+16,sh); x.fillRect(sx,sy-8,sw,sh+16);
+    x.fillStyle='#FFF8EA'; x.fillRect(sx,sy,sw,sh);
+    x.fillStyle=INK; lines.forEach((l,i)=>x.fillText(l,W/2,sy+95+i*lh));
+    const fy=sy+sh-46; x.fillStyle='#F48FA0'; for(let dx=sx+40;dx<sx+sw-40;dx+=28) x.fillRect(dx,fy-34,16,4);
+    x.fillStyle='#7A6680'; x.font='400 28px '+F; x.textAlign='left'; x.fillText($('lucky').textContent,sx+40,fy+6);
+    x.textAlign='right'; x.fillText($('serial').textContent,sx+sw-40,fy+6);
+    x.textAlign='center'; x.fillStyle='#7A6680'; x.font='400 32px '+F;
+    x.fillText('모르는 누군가가 건넨 오늘의 한 줄',W/2,H-150);
+    x.fillStyle=INK; x.font='700 32px '+F; x.fillText(SITE.replace('https://',''),W/2,H-95);
+    return new Promise(r=>c.toBlob(r,'image/png'));
+  }
+  $('share').addEventListener('click',async()=>{
+    const msg=$('shareMsg'), btn=$('share'); btn.disabled=true; msg.textContent='카드 만드는 중…';
+    const text='낯선 누군가가 건넨 오늘의 한 줄 🥠\n"'+$('slipText').textContent+'"\n\n나도 쿠키 깨러 가기 → '+SITE;
+    try{
+      const blob=await makeCard();
+      const file=blob && new File([blob],'낯선포춘쿠키.png',{type:'image/png'});
+      if(file && navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],text}); msg.textContent='';
+      }else if(navigator.share){
+        await navigator.share({title:'낯선 포춘쿠키',text,url:SITE}); msg.textContent='';
+      }else{
+        await navigator.clipboard.writeText(text); msg.textContent='공유 문구를 복사했어요. 붙여 넣어 보내 보세요!';
+      }
+    }catch(e){
+      if(e && e.name==='AbortError'){ msg.textContent=''; }
+      else{
+        try{ await navigator.clipboard.writeText(text); msg.textContent='공유 문구를 복사했어요. 붙여 넣어 보내 보세요!'; }
+        catch(_){ msg.textContent='이 화면에서는 공유할 수 없어요. 휴대폰 브라우저에서 열어 보세요.'; }
+      }
+    }
+    btn.disabled=false;
+  });
+
   function lucky(){const s=new Set(); while(s.size<6) s.add(1+Math.floor(Math.random()*45)); return [...s].sort((a,b)=>a-b).map(n=>String(n).padStart(2,'0')).join(' ');}
 
   cookie.addEventListener('click',async()=>{
@@ -356,7 +425,7 @@ textarea::placeholder{color:#B7A6BB}
       $('slipText').textContent=pick.text;
       $('lucky').textContent='행운의 숫자 '+lucky();
       $('serial').textContent='No.'+String(pick.no).padStart(3,'0');
-      $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false;
+      $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false; $('share').hidden=false; $('shareMsg').textContent='';
       $('crackHint').textContent='쪽지가 나왔어요!';
     }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
   });
