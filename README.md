@@ -8,14 +8,18 @@
 
 🔗 **https://fortune-cookie-peach.vercel.app**
 
-<p align="center">
-  <img src="docs/01-start.png" width="160" alt="시작 화면">
-  <img src="docs/02-write.png" width="160" alt="한 줄 쓰기 화면">
-  <img src="docs/03-jar.png" width="160" alt="항아리 화면">
-  <img src="docs/04-crack.png" width="160" alt="쿠키 깨기 화면">
-  <img src="docs/05-result.png" width="160" alt="쪽지 결과 화면">
-  <img src="docs/06-empty.png" width="160" alt="깰 쿠키 없음 화면">
-</p>
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/01-start.png" width="220" alt="시작 화면"><br><sub>1. 시작</sub></td>
+    <td align="center"><img src="docs/02-write.png" width="220" alt="한 줄 쓰기 화면"><br><sub>2. 한 줄 쓰기</sub></td>
+    <td align="center"><img src="docs/03-jar.png" width="220" alt="항아리 화면"><br><sub>3. 항아리에 쏙</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/04-crack.png" width="220" alt="쿠키 깨기 화면"><br><sub>4. 쿠키 깨기</sub></td>
+    <td align="center"><img src="docs/05-result.png" width="220" alt="쪽지 결과 화면"><br><sub>5. 쪽지</sub></td>
+    <td align="center"><img src="docs/06-empty.png" width="220" alt="깰 쿠키 없음 화면"><br><sub>깰 쿠키가 없을 때</sub></td>
+  </tr>
+</table>
 
 ---
 
