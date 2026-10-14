@@ -10,14 +10,14 @@
 
 <table align="center">
   <tr>
-    <td align="center"><img src="docs/01-start.png" width="220" alt="시작 화면"><br><sub>1. 시작</sub></td>
-    <td align="center"><img src="docs/02-write.png" width="220" alt="한 줄 쓰기 화면"><br><sub>2. 한 줄 쓰기</sub></td>
-    <td align="center"><img src="docs/03-jar.png" width="220" alt="항아리 화면"><br><sub>3. 항아리에 쏙</sub></td>
+    <td align="center"><img src="docs/01-start.png" width="220" alt="시작 화면"></td>
+    <td align="center"><img src="docs/02-write.png" width="220" alt="한 줄 쓰기 화면"></td>
+    <td align="center"><img src="docs/03-jar.png" width="220" alt="항아리 화면"></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/04-crack.png" width="220" alt="쿠키 깨기 화면"><br><sub>4. 쿠키 깨기</sub></td>
-    <td align="center"><img src="docs/05-result.png" width="220" alt="쪽지 결과 화면"><br><sub>5. 쪽지</sub></td>
-    <td align="center"><img src="docs/06-empty.png" width="220" alt="깰 쿠키 없음 화면"><br><sub>깰 쿠키가 없을 때</sub></td>
+    <td align="center"><img src="docs/04-crack.png" width="220" alt="쿠키 깨기 화면"></td>
+    <td align="center"><img src="docs/05-result.png" width="220" alt="쪽지 결과 화면"></td>
+    <td align="center"><img src="docs/06-empty.png" width="220" alt="깰 쿠키 없음 화면"></td>
   </tr>
 </table>
 
@@ -65,9 +65,9 @@
 
 <table align="center">
   <tr>
-    <td align="center"><img src="docs/share-card.png" width="220" alt="공유 카드 예시"><br><sub>공유 카드 예시</sub></td>
-    <td align="center"><img src="docs/share-card-2.png" width="220" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"><br><sub>실제 참여자가 받은 쪽지 No.003</sub></td>
-    <td align="center"><img src="docs/share-card-3.png" width="220" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"><br><sub>실제 참여자가 받은 쪽지 No.012</sub></td>
+    <td align="center"><img src="docs/share-card.png" width="220" alt="공유 카드 예시"></td>
+    <td align="center"><img src="docs/share-card-2.png" width="220" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"></td>
+    <td align="center"><img src="docs/share-card-3.png" width="220" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"></td>
   </tr>
 </table>
 
