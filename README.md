@@ -63,7 +63,13 @@
 - **링크 미리보기**: 카카오톡·슬랙 등에 공유하면 OG 이미지 카드가 표시됩니다.
 - **접근성**: 키보드 조작, 포커스 표시, `prefers-reduced-motion`(움직임 줄이기) 설정을 지원합니다.
 
-<p align="center"><img src="docs/share-card.png" width="260" alt="공유 카드 예시"><br><sub>공유 카드 예시</sub></p>
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/share-card.png" width="220" alt="공유 카드 예시"><br><sub>공유 카드 예시</sub></td>
+    <td align="center"><img src="docs/share-card-2.png" width="220" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"><br><sub>실제 참여자가 받은 쪽지 No.003</sub></td>
+    <td align="center"><img src="docs/share-card-3.png" width="220" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"><br><sub>실제 참여자가 받은 쪽지 No.012</sub></td>
+  </tr>
+</table>
 
 ## 사용자 구분 방식
 
