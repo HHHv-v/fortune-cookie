@@ -74,7 +74,7 @@ p{margin:0}
 /* decorations */
 .deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .deco{display:none}
-body[data-screen="1"] .deco,body[data-screen="2"] .deco,body[data-screen="3"] .deco{display:block}
+body[data-screen="1"] .deco,body[data-screen="2"] .deco,body[data-screen="3"] .deco,body[data-screen="4"] .deco{display:block}
 .deco img{position:absolute;image-rendering:pixelated;width:var(--s,32px);height:auto;animation:float 2.4s steps(4) infinite;animation-delay:var(--d,0s)}
 @keyframes float{50%{transform:translateY(-10px)}}
 .app{position:relative;z-index:1}
@@ -99,6 +99,11 @@ textarea::placeholder{color:#B7A6BB}
 @keyframes land{40%{transform:translateY(5px) scaleY(.97)}}
 .mixing{font-size:13px;color:var(--muted)}
 .mixing b{color:var(--dough-dark)}
+/* empty */
+.empty-img{width:min(180px,48vw);height:auto;image-rendering:pixelated;filter:grayscale(.35);opacity:.9;animation:sulk 2.4s steps(4) infinite}
+@keyframes sulk{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+#sE .btn{font-size:15px;padding:11px 22px}
+.empty-note{font-size:13px;color:var(--muted);line-height:1.8;word-break:keep-all}
 /* crack */
 .cookie-btn{position:relative;background:none;border:0;padding:0;cursor:pointer;width:min(260px,68vw);max-width:100%;aspect-ratio:560/451}
 .cookie-btn:disabled{cursor:default}
@@ -179,6 +184,18 @@ textarea::placeholder{color:#B7A6BB}
     <p class="mixing">항아리 속 쿠키 <b id="jarCount2">–</b>개<br>모르는 사람들의 쿠키와 섞는 중…</p>
   </section>
 
+  <!-- 1.7 깰 쿠키 없음 -->
+  <section class="screen" id="sE" hidden aria-labelledby="tE">
+    <img class="empty-img" src="assets/cookie.png" alt="">
+    <h2 id="tE">아직 깰 포춘쿠키가 없어요</h2>
+    <p class="empty-note">항아리에 있는 쿠키가 모두 내가 넣은 쿠키예요.<br>다른 사람이 한 줄을 넣으면 깰 수 있어요.</p>
+    <p class="msg" id="emptyMsg" role="status"></p>
+    <div class="actions">
+      <button class="btn sub" id="back">돌아가기</button>
+      <button class="btn" id="recheck">다시 확인하기</button>
+    </div>
+  </section>
+
   <!-- 2. 깨기 -->
   <section class="screen" id="s2" hidden aria-labelledby="t2">
     <div class="steps" aria-hidden="true"><i class="on"></i><i class="on"></i></div>
@@ -204,7 +221,7 @@ textarea::placeholder{color:#B7A6BB}
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const screens=[$('s0'),$('s1'),$('sJ'),$('s2')];
+  const screens=[$('s0'),$('s1'),$('sJ'),$('s2'),$('sE')];
   function show(i){
     screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
     document.body.dataset.screen=i;
@@ -263,7 +280,7 @@ textarea::placeholder{color:#B7A6BB}
 
   /* ---------- 1. 쓰기 ---------- */
   const line=$('line'), put=$('put');
-  let justPut=null; const seen=[];
+  let justPut=null, prefetched=null; const seen=[];
   line.addEventListener('input',()=>{ $('count').textContent=line.value.length+' / 100'; put.disabled=line.value.trim().length<2; });
   put.addEventListener('click',async()=>{
     const text=line.value.trim().replace(/\s+/g,' ').slice(0,100);
@@ -281,7 +298,13 @@ textarea::placeholder{color:#B7A6BB}
     resetCrack(); show(2);
     const st=$('jarStage'); st.classList.remove('dropping'); void st.offsetWidth; st.classList.add('dropping');
     const quick=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(()=>{ st.classList.remove('dropping'); show(3); }, quick?900:1900);
+    const ahead=store.draw(justPut,seen).catch(()=>null);
+    const wait=new Promise(r=>setTimeout(r, quick?900:1900));
+    const [p]=await Promise.all([ahead,wait]);
+    st.classList.remove('dropping');
+    if(p && p.empty){ $('emptyMsg').textContent=''; show(4); return; }
+    prefetched=(p && !p.empty)?p:null;
+    show(3);
   });
 
   /* ---------- 2. 깨기 ---------- */
@@ -320,7 +343,7 @@ textarea::placeholder{color:#B7A6BB}
     if(taps<3){ cookie.classList.add(taps===1?'shake1':'shake2'); crumbs(taps*2); $('crackHint').textContent=taps===1?'톡…':'톡톡… 금이 가요!'; return; }
     busy=true; $('crackHint').textContent='쩍!';
     let pick;
-    try{ pick=await store.draw(justPut,seen); }
+    try{ pick=prefetched || await store.draw(justPut,seen); prefetched=null; }
     catch(e){ busy=false; taps=2; $('taps').children[2].classList.remove('on'); $('crackHint').textContent='꺼내지 못했어요. 한 번 더 두드려 주세요.'; return; }
     if(pick.empty){
       busy=false; taps=2; $('taps').children[2].classList.remove('on'); cookie.classList.add('shake2');
@@ -338,6 +361,15 @@ textarea::placeholder{color:#B7A6BB}
     }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
   });
 
+  $('back').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
+  $('recheck').addEventListener('click',async()=>{
+    const b=$('recheck'); b.disabled=true; $('emptyMsg').textContent='항아리를 다시 뒤적이는 중…';
+    let p=null; try{ p=await store.draw(justPut,seen); }catch(e){}
+    b.disabled=false;
+    if(!p){ $('emptyMsg').textContent='확인하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'; return; }
+    if(p.empty){ $('emptyMsg').textContent='아직 새 쿠키가 없어요. 조금 뒤에 다시 확인해 주세요.'; return; }
+    prefetched=p; resetCrack(); show(3);
+  });
   $('home').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
 })();
 </script>
