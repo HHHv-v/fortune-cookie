@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 항아리 속 쿠키 개수
+    // 유리병 속 쿠키 개수
     if (req.method === "GET" && !req.query.draw) {
       const count = await redis.llen(KEY);
       return res.status(200).json({ count });

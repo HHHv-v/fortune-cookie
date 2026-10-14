@@ -154,7 +154,7 @@ textarea::placeholder{color:#B7A6BB}
     <img class="cookie-img bob" src="assets/cookie.png" alt="쪽지가 삐져나온 포춘쿠키">
     <h1 id="t0"><small>FORTUNE COOKIE</small>낯선 포춘쿠키</h1>
     <p class="muted">모르는 누군가의 한 줄이<br>오늘 당신의 운세가 됩니다.</p>
-    <p class="jar">항아리 속 쿠키 <b id="jarCount">–</b>개</p>
+    <p class="jar">유리병 속 쿠키 <b id="jarCount">–</b>개</p>
     <button class="btn" id="start">시작하기 ▶</button>
   </section>
 
@@ -176,21 +176,21 @@ textarea::placeholder{color:#B7A6BB}
     <button class="btn" id="put" disabled>쿠키에 넣기</button>
   </section>
 
-  <!-- 1.5 항아리 -->
+  <!-- 1.5 유리병 -->
   <section class="screen" id="sJ" hidden aria-labelledby="tJ">
-    <h2 id="tJ">항아리에 쏙!</h2>
+    <h2 id="tJ">유리병에 쏙!</h2>
     <div class="jar-stage" id="jarStage">
-      <img class="jar-img" src="assets/jar.png" alt="포춘쿠키가 가득 든 유리 항아리">
+      <img class="jar-img" src="assets/jar.png" alt="포춘쿠키가 가득 든 유리병">
       <img class="drop" src="assets/cookie.png" alt="">
     </div>
-    <p class="mixing">항아리 속 쿠키 <b id="jarCount2">–</b>개<br>모르는 사람들의 쿠키와 섞는 중…</p>
+    <p class="mixing">유리병 속 쿠키 <b id="jarCount2">–</b>개<br>모르는 사람들의 쿠키와 섞는 중…</p>
   </section>
 
   <!-- 1.7 깰 쿠키 없음 -->
   <section class="screen" id="sE" hidden aria-labelledby="tE">
     <img class="empty-img" src="assets/cookie.png" alt="">
     <h2 id="tE">아직 깰 포춘쿠키가 없어요</h2>
-    <p class="empty-note">항아리에 있는 쿠키가 모두 내가 넣은 쿠키예요.<br>다른 사람이 한 줄을 넣으면 깰 수 있어요.</p>
+    <p class="empty-note">유리병에 있는 쿠키가 모두 내가 넣은 쿠키예요.<br>다른 사람이 한 줄을 넣으면 깰 수 있어요.</p>
     <p class="msg" id="emptyMsg" role="status"></p>
     <div class="actions">
       <button class="btn sub" id="back">돌아가기</button>
@@ -295,7 +295,7 @@ textarea::placeholder{color:#B7A6BB}
       justPut=d.id; if(d.count!=null) setJar(d.count);
     }catch(e){
       put.disabled=false;
-      $('putMsg').textContent = e && e.error==='jar_full' ? '항아리가 가득 찼어요.' : '넣지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
+      $('putMsg').textContent = e && e.error==='jar_full' ? '유리병이 가득 찼어요.' : '넣지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
       return;
     }
     line.value=''; $('count').textContent='0 / 100'; $('putMsg').textContent='';
@@ -420,7 +420,7 @@ textarea::placeholder{color:#B7A6BB}
     catch(e){ busy=false; taps=2; $('taps').children[2].classList.remove('on'); $('crackHint').textContent='꺼내지 못했어요. 한 번 더 두드려 주세요.'; return; }
     if(pick.empty){
       busy=false; taps=2; $('taps').children[2].classList.remove('on'); cookie.classList.add('shake2');
-      $('crackHint').textContent='항아리에 아직 다른 사람의 쿠키가 없어요. 다음 사람이 넣고 나면 다시 두드려 주세요.'; $('actions').hidden=false;
+      $('crackHint').textContent='유리병에 아직 다른 사람의 쿠키가 없어요. 다음 사람이 넣고 나면 다시 두드려 주세요.'; $('actions').hidden=false;
       return;
     }
     seen.push(pick.id);
@@ -436,7 +436,7 @@ textarea::placeholder{color:#B7A6BB}
 
   $('back').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
   $('recheck').addEventListener('click',async()=>{
-    const b=$('recheck'); b.disabled=true; $('emptyMsg').textContent='항아리를 다시 뒤적이는 중…';
+    const b=$('recheck'); b.disabled=true; $('emptyMsg').textContent='유리병을 다시 뒤적이는 중…';
     let p=null; try{ p=await store.draw(justPut,seen); }catch(e){}
     b.disabled=false;
     if(!p){ $('emptyMsg').textContent='확인하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'; return; }
