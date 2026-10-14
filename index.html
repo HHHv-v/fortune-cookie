@@ -318,6 +318,7 @@ textarea::placeholder{color:#B7A6BB}
     [...$('taps').children].forEach(i=>i.classList.remove('on'));
     $('slip').hidden=true; $('after').hidden=true; $('actions').hidden=true; $('share').hidden=true; $('shareMsg').textContent=''; $('taps').hidden=false;
     $('crackHint').textContent='쿠키를 세 번 톡톡 두드리면 열려요.';
+    $('t2').textContent='포춘쿠키를 깨 보세요';
   }
   function crumbs(n){
     const r=cookie.getBoundingClientRect();
@@ -426,7 +427,7 @@ textarea::placeholder{color:#B7A6BB}
       $('lucky').textContent='행운의 숫자 '+lucky();
       $('serial').textContent='No.'+String(pick.no).padStart(3,'0');
       $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false; $('share').hidden=false; $('shareMsg').textContent='';
-      $('crackHint').textContent='쪽지가 나왔어요!';
+      $('t2').textContent='포춘쿠키가 깨졌어요!'; $('crackHint').textContent='모르는 누군가의 한 줄이 나왔어요.';
     }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
   });
 
