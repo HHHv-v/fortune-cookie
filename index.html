@@ -403,6 +403,9 @@ textarea::placeholder{color:#B7A6BB}
     btn.disabled=false;
   });
 
+  /* 진동: 지원하는 기기(주로 안드로이드)에서만 동작, 그 외에는 조용히 무시 */
+  function buzz(pattern){ try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){} }
+
   function lucky(){const s=new Set(); while(s.size<6) s.add(1+Math.floor(Math.random()*45)); return [...s].sort((a,b)=>a-b).map(n=>String(n).padStart(2,'0')).join(' ');}
 
   cookie.addEventListener('click',async()=>{
@@ -410,7 +413,7 @@ textarea::placeholder{color:#B7A6BB}
     taps++;
     $('taps').children[taps-1].classList.add('on');
     cookie.classList.remove('shake1','shake2'); void cookie.offsetWidth;
-    if(taps<3){ cookie.classList.add(taps===1?'shake1':'shake2'); crumbs(taps*2); $('crackHint').textContent=taps===1?'톡…':'톡톡… 금이 가요!'; return; }
+    if(taps<3){ buzz(taps===1?15:[20,40,25]); cookie.classList.add(taps===1?'shake1':'shake2'); crumbs(taps*2); $('crackHint').textContent=taps===1?'톡…':'톡톡… 금이 가요!'; return; }
     busy=true; $('crackHint').textContent='쩍!';
     let pick;
     try{ pick=prefetched || await store.draw(justPut,seen); prefetched=null; }
@@ -421,7 +424,7 @@ textarea::placeholder{color:#B7A6BB}
       return;
     }
     seen.push(pick.id);
-    crumbs(6); burst(); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
+    buzz([30,30,90]); crumbs(6); burst(); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
     setTimeout(()=>{
       $('slipText').textContent=pick.text;
       $('lucky').textContent='행운의 숫자 '+lucky();
