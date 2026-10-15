@@ -34,6 +34,13 @@ body{background:var(--bg);color:var(--ink);font-family:var(--pixel);font-size:13
   -webkit-font-smoothing:none;font-smooth:never;
   background-image:radial-gradient(var(--dot) 1.5px, transparent 1.6px);background-size:16px 16px}
 *{box-sizing:border-box}
+/* 모바일: 터치 시 어두운 강조 박스, 이미지 길게 누르기 메뉴·선택, 빠른 연속 탭 확대 방지 */
+button,a,img{-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+.cookie-btn,.cookie-btn *{-webkit-user-select:none;user-select:none}
+.cookie-btn{background:transparent!important;outline:none}
+.cookie-btn .h,.cookie-btn .broken{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .app{min-height:100%;display:grid;place-items:center;padding-block:24px;padding-inline:16px}
 .screen{width:100%;max-width:420px;display:grid;justify-items:center;gap:18px;text-align:center}
 [hidden]{display:none!important}
