@@ -107,9 +107,51 @@ textarea::placeholder{color:#B7A6BB}
 .mixing{font-size:13px;color:var(--muted)}
 .mixing b{color:var(--dough-dark)}
 /* day / mine */
-.mine{margin:-6px 0 0;font-size:13px;color:var(--ink);background:var(--panel);padding:6px 12px;box-shadow:0 0 0 2px var(--ink);word-break:keep-all}
+#s0{gap:22px}
+#s0 .jar-info{display:grid;gap:12px;justify-items:center}
+.mine{margin:0;font-size:13px;color:var(--ink);background:var(--panel);padding:6px 12px;box-shadow:0 0 0 2px var(--ink);word-break:keep-all}
 .mine b{color:#D9677C}
-.day-note{margin:0;font-size:12px;line-height:1.8;color:var(--muted);word-break:keep-all}
+.day-note{margin:-6px 0 0;font-size:12px;line-height:1.8;color:var(--muted);word-break:keep-all}
+/* collection */
+.book-fab{position:fixed;z-index:3;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;display:none;justify-items:center;gap:4px;
+  background:none;border:0;padding:4px;cursor:pointer;font:inherit;font-family:var(--pixel);color:var(--ink)}
+body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
+.book-ico{position:relative;display:block;width:42px;height:45px}
+.book-ico img{width:100%;height:100%;image-rendering:pixelated;display:block}
+.book-fab:hover .book-ico img{transform:translateY(-2px)}
+.book-fab:focus-visible{outline:3px dashed var(--pink);outline-offset:4px}
+.badge{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;
+  background:var(--dough);color:var(--ink);font-size:11px;font-weight:700;box-shadow:0 0 0 2px var(--ink)}
+
+.book-wrap{width:100%;display:grid;gap:16px;justify-items:center}
+.book-sub{font-size:12px;color:var(--muted);margin:0;word-break:keep-all;line-height:1.8}
+/* cover */
+.cover{display:grid;gap:14px;justify-items:center;cursor:pointer;background:none;border:0;padding:0;font:inherit;color:inherit}
+.cover img{width:min(230px,62vw);height:auto;image-rendering:pixelated;display:block}
+.cover:hover img{transform:translateY(-3px)}
+.cover-count{font-size:13px}
+.cover-count b{color:#D9677C}
+/* open notebook */
+.nb{position:relative;width:min(330px,100%);aspect-ratio:3/4;display:grid;grid-template-columns:26px 1fr;
+  box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),8px 12px 0 0 rgba(42,27,61,.2);background:#F48FA0}
+.nb-rings{display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:14px 0;background:#F48FA0}
+.nb-rings i{width:22px;height:9px;background:#F2A93B;box-shadow:0 0 0 2px var(--ink),inset 0 -3px 0 0 #C8711F;transform:translateX(9px)}
+.paper{position:relative;margin:10px 10px 10px 4px;background:#FFFDF6;overflow:hidden;
+  background-image:linear-gradient(90deg,transparent 30px,#F7B8C4 30px,#F7B8C4 32px,transparent 32px),
+    repeating-linear-gradient(transparent 0 31px,#D8E6F2 31px 32px);background-position:0 0,0 70px;
+  box-shadow:inset 0 0 0 2px var(--ink);transform-origin:left center}
+.paper-in{position:absolute;inset:0;padding:20px 16px 14px 42px;text-align:left;display:grid;grid-template-rows:auto 1fr auto;gap:0}
+.p-date{height:50px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#D9677C}
+.p-date small{font-weight:400;color:var(--muted);font-size:11px}
+.p-text{margin:0;padding-top:0;font-size:16px;line-height:32px;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere;overflow:hidden}
+.p-foot{display:flex;justify-content:space-between;gap:6px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:6px}
+.pager{display:flex;align-items:center;gap:14px}
+.pager button{font:inherit;font-family:var(--pixel);font-weight:700;font-size:15px;width:40px;height:36px;background:var(--panel);color:var(--ink);border:0;cursor:pointer;
+  box-shadow:0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink),-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink)}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager span{min-width:64px;text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sample-badge{font-size:11px;color:#D9677C;margin:0}
+.linkbtn{background:none;border:0;padding:4px;font:inherit;font-size:12px;color:var(--muted);text-decoration:underline;cursor:pointer}
 /* empty */
 .empty-img{width:min(180px,48vw);height:auto;image-rendering:pixelated;filter:grayscale(.35);opacity:.9;animation:sulk 2.4s steps(4) infinite}
 @keyframes sulk{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
@@ -159,14 +201,19 @@ textarea::placeholder{color:#B7A6BB}
   <img src="assets/icon-sparkle.png" alt="" style="left:9%;bottom:10%;--s:22px;--d:.9s">
   <img src="assets/icon-heart.png" alt="" style="right:8%;bottom:7%;--s:26px;--d:1.5s">
 </div>
+<button class="book-fab" id="openBook" aria-label="낯선 쪽지 모음 열기">
+  <span class="book-ico"><img src="assets/book-icon.png" alt=""><b class="badge" id="bookCount">0</b></span>
+</button>
 <main class="app">
   <!-- 0. 시작 -->
   <section class="screen enter" id="s0" aria-labelledby="t0">
     <img class="cookie-img bob" src="assets/cookie.png" alt="쪽지가 삐져나온 포춘쿠키">
     <h1 id="t0"><small>STRANGER'S FORTUNE COOKIE</small>낯선 포춘쿠키</h1>
     <p class="muted">모르는 누군가의 한 줄이<br>오늘 당신의 운세가 됩니다.</p>
-    <p class="jar">유리병 속 쿠키 <b id="jarCount">–</b>개</p>
-    <p class="mine" id="mine" hidden></p>
+    <div class="jar-info">
+      <p class="jar">유리병 속 쿠키 <b id="jarCount">–</b>개</p>
+      <p class="mine" id="mine" hidden></p>
+    </div>
     <button class="btn" id="start">시작하기 ▶</button>
     <p class="day-note" id="dayNote" hidden></p>
   </section>
@@ -197,6 +244,38 @@ textarea::placeholder{color:#B7A6BB}
       <img class="drop" src="assets/cookie.png" alt="">
     </div>
     <p class="mixing">유리병 속 쿠키 <b id="jarCount2">–</b>개<br>모르는 사람들의 쿠키와 섞는 중…</p>
+  </section>
+
+  <!-- 3. 낯선 쪽지 모음 -->
+  <section class="screen" id="sC" hidden aria-labelledby="tC">
+    <h2 id="tC">낯선 쪽지 모음</h2>
+    <div class="book-wrap">
+      <!-- 표지 -->
+      <div id="coverView" class="book-wrap">
+        <button class="cover" id="cover" aria-label="쪽지 모음 펼치기">
+          <img src="assets/book.png" alt="분홍색 수첩 표지">
+        </button>
+        <p class="cover-count" id="coverCount"></p>
+        <p class="book-sub" id="coverSub"></p>
+        <button class="btn" id="openPages">펼쳐 보기 ▶</button>
+        <button class="linkbtn" id="toggleSample" hidden>어떻게 쌓이는지 예시 보기</button>
+      </div>
+      <!-- 펼친 수첩 -->
+      <div id="pagesView" class="book-wrap" hidden>
+        <p class="sample-badge" id="sampleBadge" hidden>예시 쪽지예요. 실제 수첩에는 내가 받은 쪽지만 담겨요.</p>
+        <div class="nb" id="nb">
+          <div class="nb-rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="paper" id="paper"><div class="paper-in">
+            <div class="p-date" id="pDate"></div>
+            <p class="p-text" id="pText"></p>
+            <div class="p-foot"><span id="pLucky"></span><span id="pNo"></span></div>
+          </div></div>
+        </div>
+        <div class="pager"><button id="prevPage" aria-label="이전 장">◀</button><span id="pageNum"></span><button id="nextPage" aria-label="다음 장">▶</button></div>
+        <button class="linkbtn" id="closePages">표지로 돌아가기</button>
+      </div>
+    </div>
+    <div class="actions"><button class="btn sub" id="closeBook">처음으로</button></div>
   </section>
 
   <!-- 1.7 깰 쿠키 없음 -->
@@ -238,7 +317,7 @@ textarea::placeholder{color:#B7A6BB}
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const screens=[$('s0'),$('s1'),$('sJ'),$('s2'),$('sE')];
+  const screens=[$('s0'),$('s1'),$('sJ'),$('s2'),$('sE'),$('sC')];
   function show(i){
     screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
     document.body.dataset.screen=i;
@@ -270,7 +349,7 @@ textarea::placeholder{color:#B7A6BB}
     async count(){const r=await fetch('/api/cookies',{cache:'no-store'}); if(!r.ok) throw r; return (await r.json()).count},
     async put(text){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,v:visitor,shared})});
       const d=await r.json(); if(!r.ok) throw d; return d},
-    async open(id){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:id,v:visitor,shared})});
+    async open(id,lucky){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:id,v:visitor,shared,lucky})});
       const d=await r.json(); if(!r.ok) throw d; return d},
     async me(){const r=await fetch('/api/cookies?me=1&v='+encodeURIComponent(visitor),{cache:'no-store'}); if(!r.ok) throw r; return r.json()},
     async draw(justPut,seen){const q=new URLSearchParams({draw:'1',exclude:justPut||'',v:visitor,shared:shared?'1':'0',seen:seen.slice(-50).join(',')});
@@ -308,6 +387,79 @@ textarea::placeholder{color:#B7A6BB}
     const h=Math.floor(left/3600e3), m=Math.floor(left%3600e3/60e3);
     return (h?h+'시간 ':'')+m+'분';
   }
+  /* ---------- 낯선 쪽지 모음: 내가 연 쪽지를 날짜별로 저장 (배포: 서버 / 미리보기: 내 전용 db 공간 / 그 외: 이 기기) ---------- */
+  const book={ items:[], backend:null,
+    async init(){
+      try{
+        if(window.claude && window.claude.use){
+          const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+          const uid=user && await user.id();
+          if(db && uid){ this.backend={col:db.collection('data/users/'+uid)}; const snap=await this.backend.col.get(); this.items=snap.docs.filter(d=>d.id.startsWith('p_')).map(d=>d.data()); this.sort(); return; }
+        }
+      }catch(e){}
+      try{
+        const r=await fetch('/api/cookies?book=1&v='+encodeURIComponent(visitor),{cache:'no-store'});
+        if(r.ok){ this.backend={server:true}; this.items=(await r.json()).items||[]; this.sort(); return; }
+      }catch(e){}
+      try{ this.items=JSON.parse(localStorage.getItem('fc-book')||'[]'); }catch(e){ this.items=[]; }
+      this.sort();
+    },
+    sort(){ this.items.sort((a,b)=>b.t-a.t); },
+    async add(e){
+      if(this.items.some(x=>x.id===e.id)) return;
+      this.items.unshift(e);
+      if(this.backend && this.backend.server){ /* 서버는 쿠키를 열 때 이미 저장함 */ }
+      else if(this.backend){ try{ await this.backend.col.doc('p_'+e.id).set(e); }catch(err){} }
+      else{ try{ localStorage.setItem('fc-book',JSON.stringify(this.items)); }catch(err){} }
+    } };
+  const SAMPLES=[
+    {id:'s1',date:'2026-10-18',no:29,text:'좋아하는 것을 계속 따라가세요 반드시 행복해집니다(´▽`)ﾉ',lucky:'행운의 숫자 03 07 29 33 38 45'},
+    {id:'s2',date:'2026-10-17',no:12,text:'우울할 땐 우사기 하입보이 50초부터 들어보세요 ♪♪',lucky:'행운의 숫자 01 03 21 30 40 44'},
+    {id:'s3',date:'2026-10-16',no:3,text:'힘들 땐 하늘을 봐',lucky:'행운의 숫자 16 20 21 29 37 41'},
+    {id:'s4',date:'2026-10-15',no:7,text:'힘든 오늘이 내 인생의 전부는 아니다',lucky:'행운의 숫자 04 10 23 29 32 39'}];
+  let showSample=false, page=0;
+  const WD=['일','월','화','수','목','금','토'];
+  function fmtDate(d){ const [y,m,dd]=d.split('-').map(Number); const w=new Date(Date.UTC(y,m-1,dd)).getUTCDay(); return m+'월 '+dd+'일 ('+WD[w]+')'; }
+  const rowsNow=()=>book.items.length? [...book.items].sort((a,b)=>a.t-b.t) : (showSample? [...SAMPLES].reverse() : []);
+  function renderBook(){
+    const n=book.items.length;
+    $('bookCount').textContent=n; $('bookCount').hidden=!n;
+    $('coverCount').innerHTML = n ? '모은 쪽지 <b>'+n+'</b>장' : '';
+    $('coverSub').innerHTML = n ? '모르는 사람들에게 받은 한 줄이<br>하루에 한 장씩 쌓여요.' : '아직 받은 쪽지가 없어요.<br>오늘의 쿠키를 깨면 첫 장이 채워져요.';
+    $('openPages').hidden=!n; $('toggleSample').hidden=!!n;
+  }
+  function renderPage(){
+    const rows=rowsNow(); if(!rows.length) return;
+    page=Math.max(0,Math.min(page,rows.length-1));
+    const e=rows[page];
+    $('pDate').innerHTML=''; const d=document.createElement('span'); d.textContent=fmtDate(e.date);
+    const sm=document.createElement('small'); sm.textContent='No.'+String(e.no).padStart(3,'0'); $('pDate').append(d,sm);
+    $('pText').textContent=e.text; $('pLucky').textContent=e.lucky; $('pNo').textContent=(page+1)+'번째 쪽지';
+    $('pageNum').textContent=(page+1)+' / '+rows.length;
+    $('prevPage').disabled=page===0; $('nextPage').disabled=page===rows.length-1;
+    $('sampleBadge').hidden=!!book.items.length;
+  }
+  function openPages(){ page=rowsNow().length-1; $('coverView').hidden=true; $('pagesView').hidden=false; renderPage(); }
+  function closePages(){ $('pagesView').hidden=true; $('coverView').hidden=false; showSample=false; renderBook(); }
+  function turn(dir){
+    const rows=rowsNow(), np=page+dir; if(np<0||np>=rows.length) return;
+    page=np; renderPage();
+  }
+  $('prevPage').addEventListener('click',()=>turn(-1));
+  $('nextPage').addEventListener('click',()=>turn(1));
+  $('cover').addEventListener('click',()=>{ if(book.items.length) openPages(); });
+  $('openPages').addEventListener('click',openPages);
+  $('closePages').addEventListener('click',closePages);
+  $('toggleSample').addEventListener('click',()=>{ showSample=true; openPages(); });
+  document.addEventListener('keydown',e=>{ if($('sC').hidden||$('pagesView').hidden) return; if(e.key==='ArrowLeft') turn(-1); if(e.key==='ArrowRight') turn(1); });
+  (()=>{ let x0=null; const nb=$('nb');
+    nb.addEventListener('pointerdown',e=>{ x0=e.clientX; });
+    nb.addEventListener('pointerup',e=>{ if(x0===null) return; const dx=e.clientX-x0; x0=null; if(Math.abs(dx)>40) turn(dx<0?1:-1); });
+  })();
+  $('openBook').addEventListener('click',()=>{ closePages(); renderBook(); show(5); });
+  $('closeBook').addEventListener('click',()=>{ renderStart(); show(0); });
+  book.init().then(renderBook);
+
   function renderStart(){
     if(!shared && day.date!==today()) day=loadDay();
     const st=$('start'), note=$('dayNote'); st.disabled=false;
@@ -509,7 +661,8 @@ textarea::placeholder{color:#B7A6BB}
       $('crackHint').textContent='유리병에 아직 다른 사람의 쿠키가 없어요. 다음 사람이 넣고 나면 다시 두드려 주세요.'; $('actions').hidden=false;
       return;
     }
-    try{ await store.open(pick.id); }
+    const luckyStr='행운의 숫자 '+lucky();
+    try{ await store.open(pick.id,luckyStr); }
     catch(e){
       if(e && e.error==='already_opened'){ day.opened=true; saveDay(); resetCrack(); renderStart(); show(0); return; }
     }
@@ -517,11 +670,13 @@ textarea::placeholder{color:#B7A6BB}
     buzz([30,30,90]); crumbs(6); burst(); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
     setTimeout(()=>{
       $('slipText').textContent=pick.text;
-      $('lucky').textContent='행운의 숫자 '+lucky();
+      $('lucky').textContent=luckyStr;
       $('serial').textContent='No.'+String(pick.no).padStart(3,'0');
       $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false; $('share').hidden=false; $('shareMsg').textContent='';
       $('t2').textContent='포춘쿠키가 깨졌어요!'; $('crackHint').textContent='모르는 누군가의 한 줄이 나왔어요.';
-      if(!shared){ day.opened=true; day.slip={text:pick.text,lucky:$('lucky').textContent,serial:$('serial').textContent}; saveDay(); }
+      if(!shared){ day.opened=true; day.slip={text:pick.text,lucky:$('lucky').textContent,serial:$('serial').textContent}; saveDay();
+        book.add({id:pick.id,date:today(),no:pick.no,text:pick.text,lucky:$('lucky').textContent,t:Date.now()}).then(renderBook);
+        $('shareMsg').textContent='낯선 쪽지 모음에 한 장 담았어요 ♥'; }
     }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
   });
 

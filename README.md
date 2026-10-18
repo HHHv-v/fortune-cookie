@@ -74,6 +74,7 @@
 
 | 기능 | 설명 |
 |---|---|
+| **낯선 쪽지 모음** | 내가 연 쪽지가 하루에 한 장씩 수첩에 쌓여요. 시작 화면 오른쪽 위 수첩 아이콘(모은 장수 배지)을 누르면 표지가 나오고, 펼쳐서 한 장씩 넘겨 볼 수 있어요. 서버에 방문자별로 저장돼요. |
 | **쪽지 정보** | 받은 한 줄과 함께 행운의 숫자 6개(1~45, 깰 때마다 새로 뽑음)와 쿠키 번호(No.001)가 찍혀요. |
 
 ### 연출
@@ -137,6 +138,8 @@ fortune-cookie/
 │   ├── cookie.png          # 포춘쿠키 픽셀 이미지
 │   ├── cookie-broken.png   # 깨진 포춘쿠키 이미지
 │   ├── jar.png             # 쿠키 유리병 이미지
+│   ├── book.png            # 낯선 쪽지 모음 수첩 표지
+│   ├── book-icon.png       # 시작 화면 수첩 아이콘
 │   ├── icon-*.png          # 장식 아이콘 (하트 · 별 · 클로버 · 반짝이)
 │   ├── favicon*.png        # 파비콘 · 홈 화면 아이콘
 │   ├── og.png              # 링크 미리보기 이미지 (1200×630)
@@ -154,7 +157,8 @@ fortune-cookie/
 |---|---|---|---|
 | `GET` | — | `{ count }` | 유리병 속 쿠키 수 |
 | `POST` | `{ text, v, shared }` | `{ id, count }` | 한 줄 넣기 (`text` 2~100자, `v` 방문자 ID, 하루 한 번) |
-| `POST` | `{ open, v, shared }` | `{ ok, opens }` | 쿠키 열기 기록 (`open` 쿠키 ID, 하루 한 번, 열린 횟수 +1) |
+| `POST` | `{ open, v, shared, lucky }` | `{ ok, opens }` | 쿠키 열기 기록 (`open` 쿠키 ID, 하루 한 번, 열린 횟수 +1, 낯선 쪽지 모음에 저장) |
+| `GET` | `?book=1&v=…` | `{ items }` | 낯선 쪽지 모음 (내가 연 쪽지 목록) |
 | `GET` | `?me=1&v=…` | `{ mine, opened, putToday, openedToday }` | 내 쿠키 소식과 오늘 참여 여부 |
 | `GET` | `?draw=1&v=…&exclude=…&seen=…&shared=0` | `{ id, text, no, count }` 또는 `{ empty: true }` | 무작위로 하나 꺼내기 |
 
@@ -174,7 +178,7 @@ fortune-cookie/
 | 리전 | `iad1` Washington, D.C. (Vercel 함수와 같은 리전) |
 | 연결 프로젝트 | `fortune-cookie` (Production, Preview) |
 | 환경변수 접두사 | `KV` → `KV_REST_API_URL`, `KV_REST_API_TOKEN` 등 |
-| 저장 키 | `fortune:cookies` (쿠키 목록), `fortune:opens` (쿠키별 열린 횟수), `fortune:put:날짜` · `fortune:open:날짜` (그날 참여한 방문자, 이틀 뒤 자동 삭제) |
+| 저장 키 | `fortune:cookies` (쿠키 목록), `fortune:opens` (쿠키별 열린 횟수), `fortune:book:방문자ID` (낯선 쪽지 모음), `fortune:put:날짜` · `fortune:open:날짜` (그날 참여한 방문자, 이틀 뒤 자동 삭제) |
 
 연결 방법은 다음과 같습니다.
 
@@ -206,6 +210,22 @@ fortune-cookie/
 
 
 ## 업데이트 기록
+
+### 2026.10.18 · 낯선 쪽지 모음
+
+- **낯선 쪽지 모음**: 내가 연 쪽지를 하루에 한 장씩 모아 두는 수첩이 생겼습니다.
+- **시작 화면 아이콘**: 오른쪽 위 분홍 수첩 아이콘에 모은 장수가 배지로 표시됩니다.
+- **표지와 펼친 수첩**: 아이콘을 누르면 수첩 표지가 나오고, 펼치면 줄 노트 종이에 날짜, 쪽지 번호, 받은 한 줄, 그날의 행운의 숫자가 적혀 있습니다. ◀ ▶ 버튼, 좌우로 밀기, 키보드 화살표로 한 장씩 넘길 수 있습니다.
+- **서버 저장**: 쪽지 모음은 서버에 방문자별로 저장되어 새로고침해도 사라지지 않습니다. (`#shared` 시연 모드에서는 저장하지 않음)
+- **시작 화면 정리**: 요소 사이 간격을 넓혀 덜 답답하게 바꿨습니다.
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/10-book-start.png" width="220" alt="수첩 아이콘이 있는 시작 화면"><br><sub>시작 화면 수첩 아이콘</sub></td>
+    <td align="center"><img src="docs/11-book-cover.png" width="220" alt="낯선 쪽지 모음 표지"><br><sub>표지</sub></td>
+    <td align="center"><img src="docs/12-book-page.png" width="220" alt="낯선 쪽지 모음 펼친 화면"><br><sub>펼친 수첩</sub></td>
+  </tr>
+</table>
 
 ### 2026.10.18 · 하루 한 번 & 내 쿠키 소식
 

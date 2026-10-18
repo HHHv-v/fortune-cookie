@@ -7,6 +7,7 @@ const redis = url && token ? new Redis({ url, token }) : null;
 
 const KEY = "fortune:cookies"; // 유리병 속 쿠키 목록
 const OPENS = "fortune:opens"; // 쿠키별로 열린 횟수 (hash: 쿠키 id → 횟수)
+const BOOK = (v) => `fortune:book:${v}`; // 방문자별 '낯선 쪽지 모음' (내가 연 쪽지 목록)
 const MAX_LEN = 100;
 const MAX_COOKIES = 5000;
 const DAY_TTL = 60 * 60 * 48; // 하루 기록은 이틀 뒤 자동 삭제
@@ -54,6 +55,14 @@ export default async function handler(req, res) {
       return res.status(200).json({ mine: ids.length, opened, putToday: !!putToday, openedToday: !!openedToday });
     }
 
+    // 낯선 쪽지 모음: 내가 연 쪽지 목록 (오래된 순)
+    if (req.method === "GET" && req.query.book) {
+      const v = cleanVisitor(req.query.v);
+      if (!v) return res.status(200).json({ items: [] });
+      const items = (await redis.lrange(BOOK(v), 0, -1)).map((c) => (typeof c === "string" ? JSON.parse(c) : c));
+      return res.status(200).json({ items });
+    }
+
     // 유리병 속 쿠키 개수
     if (req.method === "GET" && !req.query.draw) {
       const count = await redis.llen(KEY);
@@ -93,6 +102,15 @@ export default async function handler(req, res) {
           if (!first) return res.status(429).json({ error: "already_opened" });
         }
         const opens = await redis.hincrby(OPENS, id, 1);
+        // 낯선 쪽지 모음에 한 장 저장 (문장과 번호는 서버의 원본에서 가져옴)
+        if (!shared && v) {
+          const all = await readAll();
+          const c = all.find((x) => x.id === id);
+          if (c) {
+            const lucky = String(body.lucky || "").replace(/[^0-9 가-힣]/g, "").slice(0, 40);
+            await redis.rpush(BOOK(v), JSON.stringify({ id: c.id, text: c.text, no: c.no, lucky, date: d, t: Date.now() }));
+          }
+        }
         return res.status(200).json({ ok: true, opens });
       }
 
