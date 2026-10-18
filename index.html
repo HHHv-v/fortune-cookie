@@ -125,8 +125,7 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
 .book-ico img{width:100%;height:100%;image-rendering:pixelated;display:block}
 @media (hover:hover){.book-fab:hover .book-ico img{transform:translateY(-2px)}}
 .book-fab:focus-visible{outline:3px dashed var(--pink);outline-offset:4px}
-.badge{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;
-  background:var(--dough);color:var(--ink);font-size:11px;font-weight:700;box-shadow:0 0 0 2px var(--ink)}
+.badge{display:block;margin-top:2px;text-align:center;color:#D9677C;font-size:11px;font-weight:700;line-height:1}
 
 .book-wrap{width:100%;display:grid;gap:16px;justify-items:center}
 .book-sub{font-size:12px;color:var(--muted);margin:0;word-break:keep-all;line-height:1.8}
@@ -207,7 +206,7 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
   <img src="assets/icon-heart.png" alt="" style="right:8%;bottom:7%;--s:26px;--d:1.5s">
 </div>
 <button class="book-fab" id="openBook" aria-label="낯선 쪽지 모음 열기">
-  <span class="book-ico"><img src="assets/book-icon.png" alt=""><b class="badge" id="bookCount">0</b></span>
+  <span class="book-ico"><img src="assets/book-icon.png" alt=""></span><b class="badge" id="bookCount" hidden>0</b>
 </button>
 <main class="app">
   <!-- 0. 시작 -->
@@ -435,7 +434,7 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
   const rowsNow=()=>book.items.length? [...book.items].sort((a,b)=>a.t-b.t) : (showSample? [...SAMPLES].reverse() : []);
   function renderBook(){
     const n=book.items.length;
-    $('bookCount').textContent=n; $('bookCount').hidden=!n;
+    $('bookCount').textContent=n+'장'; $('bookCount').hidden=!n;
     $('coverCount').innerHTML = n ? '모은 쪽지 <b>'+n+'</b>장' : '';
     $('coverSub').innerHTML = n ? '모르는 사람들에게 받은 한 줄이<br>하루에 한 장씩 쌓여요.' : '아직 받은 쪽지가 없어요.<br>오늘의 쿠키를 깨면 첫 장이 채워져요.';
     $('openPages').hidden=!n; $('toggleSample').hidden=!!n;
