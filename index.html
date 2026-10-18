@@ -69,7 +69,7 @@ p{margin:0}
 .btn{font:inherit;font-family:var(--pixel);font-weight:700;font-size:16px;color:var(--ink);background:var(--dough);border:0;border-radius:0;
   padding:12px 28px;cursor:pointer;
   box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),inset 0 -4px 0 0 var(--dough-dark),4px 8px 0 0 rgba(42,27,61,.25)}
-.btn:hover:not(:disabled){filter:brightness(1.06)}
+@media (hover:hover){.btn:hover:not(:disabled){filter:brightness(1.06)}}
 .btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink),inset 0 4px 0 0 var(--dough-dark)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.sub{background:var(--panel);font-size:13px;padding:9px 18px;box-shadow:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink)}
@@ -118,7 +118,7 @@ textarea::placeholder{color:#B7A6BB}
 body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
 .book-ico{position:relative;display:block;width:42px;height:45px}
 .book-ico img{width:100%;height:100%;image-rendering:pixelated;display:block}
-.book-fab:hover .book-ico img{transform:translateY(-2px)}
+@media (hover:hover){.book-fab:hover .book-ico img{transform:translateY(-2px)}}
 .book-fab:focus-visible{outline:3px dashed var(--pink);outline-offset:4px}
 .badge{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;
   background:var(--dough);color:var(--ink);font-size:11px;font-weight:700;box-shadow:0 0 0 2px var(--ink)}
@@ -128,7 +128,7 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
 /* cover */
 .cover{display:grid;gap:14px;justify-items:center;cursor:pointer;background:none;border:0;padding:0;font:inherit;color:inherit}
 .cover img{width:min(230px,62vw);height:auto;image-rendering:pixelated;display:block}
-.cover:hover img{transform:translateY(-3px)}
+@media (hover:hover){.cover:hover img{transform:translateY(-3px)}}
 .cover-count{font-size:13px}
 .cover-count b{color:#D9677C}
 /* open notebook */
@@ -318,8 +318,15 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
 (function(){
   const $=id=>document.getElementById(id);
   const screens=[$('s0'),$('s1'),$('sJ'),$('s2'),$('sE'),$('sC')];
+  // 모바일(특히 iOS)에서 숨겼다 다시 보인 요소의 애니메이션이 멈추거나 반투명하게 남는 문제 방지:
+  // 등장 애니메이션은 끝나면 클래스를 지우고, 화면을 보일 때마다 반복 애니메이션을 새로 시작
+  function restartAnims(root){
+    root.querySelectorAll('.bob,.empty-img').forEach(el=>{ el.style.animation='none'; void el.offsetWidth; el.style.animation=''; });
+  }
+  function enter(el){ el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+  document.addEventListener('animationend',e=>{ if(e.animationName==='enter') e.target.classList.remove('enter'); });
   function show(i){
-    screens.forEach((s,k)=>{ s.hidden=k!==i; s.classList.toggle('enter',k===i); });
+    screens.forEach((s,k)=>{ s.hidden=k!==i; if(k===i){ enter(s); restartAnims(s); } else s.classList.remove('enter'); });
     document.body.dataset.screen=i;
     window.scrollTo(0,0);
   }
@@ -439,8 +446,8 @@ body:not([data-screen]) .book-fab,body[data-screen="0"] .book-fab{display:grid}
     $('prevPage').disabled=page===0; $('nextPage').disabled=page===rows.length-1;
     $('sampleBadge').hidden=!!book.items.length;
   }
-  function openPages(){ page=rowsNow().length-1; $('coverView').hidden=true; $('pagesView').hidden=false; renderPage(); }
-  function closePages(){ $('pagesView').hidden=true; $('coverView').hidden=false; showSample=false; renderBook(); }
+  function openPages(){ page=rowsNow().length-1; $('coverView').hidden=true; $('pagesView').hidden=false; enter($('pagesView')); renderPage(); }
+  function closePages(){ $('pagesView').hidden=true; $('coverView').hidden=false; enter($('coverView')); showSample=false; renderBook(); }
   function turn(dir){
     const rows=rowsNow(), np=page+dir; if(np<0||np>=rows.length) return;
     page=np; renderPage();
