@@ -56,7 +56,7 @@ img{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit
 .steps i.on{background:var(--pink)}
 .label{font-size:11px;color:var(--muted);letter-spacing:.08em}
 h1{font-weight:700;font-size:33px;line-height:1.25;margin:0;letter-spacing:-.01em}
-h1 small{display:block;font-size:13px;font-weight:400;color:var(--pink);letter-spacing:.2em;margin-bottom:6px}
+h1 small{display:block;font-size:11px;font-weight:400;color:var(--pink);letter-spacing:.1em;margin-bottom:6px}
 h2{font-weight:700;font-size:22px;line-height:1.4;margin:0;text-wrap:balance}
 p{margin:0}
 .muted{color:var(--muted)}
@@ -446,7 +446,7 @@ textarea::placeholder{color:#B7A6BB}
     const F='"Galmuri11", monospace', INK='#2A1B3D';
     x.fillStyle='#FBE6EC'; x.fillRect(0,0,W,H);
     x.fillStyle='#F3CBD6'; for(let yy=20;yy<H;yy+=40) for(let xx=20;xx<W;xx+=40){ x.beginPath(); x.arc(xx,yy,4,0,7); x.fill(); }
-    x.textAlign='center'; x.fillStyle='#F48FA0'; x.font='400 30px '+F; x.fillText("STRANGER'S FORTUNE COOKIE",W/2,130);
+    x.textAlign='center'; x.fillStyle='#F48FA0'; x.font='400 28px '+F; x.fillText("STRANGER'S FORTUNE COOKIE",W/2,130);
     x.fillStyle=INK; x.font='700 72px '+F; x.fillText('낯선 포춘쿠키',W/2,215);
     const img=document.querySelector('.cookie-btn .broken');
     if(img && img.complete){ const iw=640, ih=iw*img.naturalHeight/img.naturalWidth; x.drawImage(img,(W-iw)/2,270,iw,ih); }
