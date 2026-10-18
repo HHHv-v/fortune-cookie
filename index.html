@@ -446,7 +446,7 @@ textarea::placeholder{color:#B7A6BB}
     const F='"Galmuri11", monospace', INK='#2A1B3D';
     x.fillStyle='#FBE6EC'; x.fillRect(0,0,W,H);
     x.fillStyle='#F3CBD6'; for(let yy=20;yy<H;yy+=40) for(let xx=20;xx<W;xx+=40){ x.beginPath(); x.arc(xx,yy,4,0,7); x.fill(); }
-    x.textAlign='center'; x.fillStyle='#F48FA0'; x.font='400 30px '+F; x.fillText('FORTUNE COOKIE',W/2,130);
+    x.textAlign='center'; x.fillStyle='#F48FA0'; x.font='400 30px '+F; x.fillText("STRANGER'S FORTUNE COOKIE",W/2,130);
     x.fillStyle=INK; x.font='700 72px '+F; x.fillText('낯선 포춘쿠키',W/2,215);
     const img=document.querySelector('.cookie-btn .broken');
     if(img && img.complete){ const iw=640, ih=iw*img.naturalHeight/img.naturalWidth; x.drawImage(img,(W-iw)/2,270,iw,ih); }
