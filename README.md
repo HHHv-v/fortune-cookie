@@ -90,11 +90,11 @@
 | **공유 카드** | 받은 쪽지를 픽셀 카드 이미지(1080×1350)로 만들어 카카오톡·인스타그램 등으로 보내요. 공유 창이 없으면 문구를 복사해요. |
 | **링크 미리보기** | 링크를 공유하면 OG 이미지 카드가 표시돼요. |
 
-<table align="center">
+<table width="100%">
   <tr>
-    <td align="center"><img src="docs/share-card.png" width="220" alt="공유 카드 예시"></td>
-    <td align="center"><img src="docs/share-card-2.png" width="220" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"></td>
-    <td align="center"><img src="docs/share-card-3.png" width="220" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"></td>
+    <td width="33%" align="center"><img src="docs/share-card.png" width="100%" alt="실제 참여자가 받은 공유 카드: 좋아하는 것을 계속 따라가세요 반드시 행복해집니다"></td>
+    <td width="33%" align="center"><img src="docs/share-card-2.png" width="100%" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"></td>
+    <td width="33%" align="center"><img src="docs/share-card-3.png" width="100%" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"></td>
   </tr>
 </table>
 
