@@ -19,11 +19,6 @@
     <td align="center"><img src="docs/05-result.png" width="220" alt="쪽지 결과 화면"><br><sub>5. 쪽지</sub></td>
     <td align="center"><img src="docs/06-empty.png" width="220" alt="깰 쿠키 없음 화면"><br><sub>깰 쿠키가 없을 때</sub></td>
   </tr>
-  <tr>
-    <td align="center"><img src="docs/07-mine.png" width="220" alt="내 쿠키 소식과 내 쿠키 깨러 가기 화면"><br><sub>한 줄만 넣고 아직 못 깼을 때</sub></td>
-    <td align="center"><img src="docs/08-done.png" width="220" alt="오늘 참여를 마친 시작 화면"><br><sub>오늘 다 했을 때</sub></td>
-    <td align="center"><img src="docs/09-saved.png" width="220" alt="오늘 받은 쪽지 다시 보기 화면"><br><sub>오늘의 쪽지 다시 보기</sub></td>
-  </tr>
 </table>
 
 ---
@@ -177,6 +172,23 @@ fortune-cookie/
 
 카카오톡은 한 번 본 링크의 미리보기를 저장해 둡니다. 주소 끝에 `?v=2`처럼 새 값을 붙여 공유하거나, [카카오 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 캐시를 초기화합니다.
 
+
+## 업데이트 기록
+
+### 2026.10.18 · 하루 한 번 & 내 쿠키 소식
+
+- **하루 한 번 참여**: 한국 시간 자정을 기준으로 하루에 한 줄 넣기, 쿠키 하나 깨기만 할 수 있습니다. 브라우저와 서버 양쪽에서 확인해 주소로 직접 요청해도 우회할 수 없습니다.
+- **상황별 시작 화면**: 한 줄만 넣고 아직 못 깼으면 **내 쿠키 깨러 가기**, 오늘 다 했으면 다음 쿠키까지 남은 시간과 **오늘의 쪽지 다시 보기**가 나옵니다.
+- **내 쿠키 소식**: 누군가 내 쿠키를 깨면 시작 화면에 "내가 넣은 쿠키가 N명에게 열렸어요"가 표시됩니다. 아직 아무도 열지 않았으면 "내가 넣은 쿠키가 누군가를 기다리고 있어요"가 보입니다.
+- **시연 모드 유지**: 주소 끝에 `#shared`를 붙인 공용 기기 모드에서는 하루 제한이 적용되지 않습니다.
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="docs/07-mine.png" width="220" alt="내 쿠키 소식과 내 쿠키 깨러 가기 화면"><br><sub>한 줄만 넣고 아직 못 깼을 때</sub></td>
+    <td align="center"><img src="docs/08-done.png" width="220" alt="오늘 참여를 마친 시작 화면"><br><sub>오늘 다 했을 때</sub></td>
+    <td align="center"><img src="docs/09-saved.png" width="220" alt="오늘 받은 쪽지 다시 보기 화면"><br><sub>오늘의 쪽지 다시 보기</sub></td>
+  </tr>
+</table>
 
 ## 만든 사람
 
