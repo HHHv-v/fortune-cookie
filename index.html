@@ -106,6 +106,10 @@ textarea::placeholder{color:#B7A6BB}
 @keyframes land{40%{transform:translateY(5px) scaleY(.97)}}
 .mixing{font-size:13px;color:var(--muted)}
 .mixing b{color:var(--dough-dark)}
+/* day / mine */
+.mine{margin:-6px 0 0;font-size:13px;color:var(--ink);background:var(--panel);padding:6px 12px;box-shadow:0 0 0 2px var(--ink);word-break:keep-all}
+.mine b{color:#D9677C}
+.day-note{margin:0;font-size:12px;line-height:1.8;color:var(--muted);word-break:keep-all}
 /* empty */
 .empty-img{width:min(180px,48vw);height:auto;image-rendering:pixelated;filter:grayscale(.35);opacity:.9;animation:sulk 2.4s steps(4) infinite}
 @keyframes sulk{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
@@ -162,7 +166,9 @@ textarea::placeholder{color:#B7A6BB}
     <h1 id="t0"><small>FORTUNE COOKIE</small>낯선 포춘쿠키</h1>
     <p class="muted">모르는 누군가의 한 줄이<br>오늘 당신의 운세가 됩니다.</p>
     <p class="jar">유리병 속 쿠키 <b id="jarCount">–</b>개</p>
+    <p class="mine" id="mine" hidden></p>
     <button class="btn" id="start">시작하기 ▶</button>
+    <p class="day-note" id="dayNote" hidden></p>
   </section>
 
   <!-- 1. 쓰기 -->
@@ -257,11 +263,16 @@ textarea::placeholder{color:#B7A6BB}
   const localStore={ items:[],
     async count(){return this.items.length},
     async put(text){const id=newId(); this.items.push({id,text,v:visitor,t:Date.now()}); return {id,count:this.items.length}},
-    async draw(justPut,seen){return choose(this.items.map((c,i)=>({...c,no:i+1})),justPut,seen)} };
+    async draw(justPut,seen){return choose(this.items.map((c,i)=>({...c,no:i+1})),justPut,seen)},
+    async open(id){const c=this.items.find(x=>x.id===id); if(c) c.opens=(c.opens||0)+1;},
+    async me(){const m=this.items.filter(c=>c.v===visitor); return {mine:m.length,opened:m.reduce((a,c)=>a+(c.opens||0),0)}} };
   const apiStore={
     async count(){const r=await fetch('/api/cookies',{cache:'no-store'}); if(!r.ok) throw r; return (await r.json()).count},
-    async put(text){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,v:visitor})});
+    async put(text){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,v:visitor,shared})});
       const d=await r.json(); if(!r.ok) throw d; return d},
+    async open(id){const r=await fetch('/api/cookies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:id,v:visitor,shared})});
+      const d=await r.json(); if(!r.ok) throw d; return d},
+    async me(){const r=await fetch('/api/cookies?me=1&v='+encodeURIComponent(visitor),{cache:'no-store'}); if(!r.ok) throw r; return r.json()},
     async draw(justPut,seen){const q=new URLSearchParams({draw:'1',exclude:justPut||'',v:visitor,shared:shared?'1':'0',seen:seen.slice(-50).join(',')});
       const r=await fetch('/api/cookies?'+q,{cache:'no-store'}); if(!r.ok) throw r; return r.json()} };
   function dbStore(db){
@@ -271,7 +282,9 @@ textarea::placeholder{color:#B7A6BB}
     return {
       async count(){return all.length},
       async put(text){const id=newId(); await col.doc(id).set({text,v:visitor,t:Date.now()}); if(!all.some(c=>c.id===id)) all.push({id,text,v:visitor,t:Date.now()}); return {id,count:all.length}},
-      async draw(justPut,seen){return choose(all.map((c,i)=>({...c,no:i+1})),justPut,seen)} };
+      async draw(justPut,seen){return choose(all.map((c,i)=>({...c,no:i+1})),justPut,seen)},
+      async open(id){const c=all.find(x=>x.id===id); try{ await col.doc(id).update({opens:((c&&c.opens)||0)+1}); }catch(e){} },
+      async me(){const m=all.filter(c=>c.v===visitor); return {mine:m.length,opened:m.reduce((a,c)=>a+(c.opens||0),0)}} };
   }
 
   let store=localStore;
@@ -279,15 +292,76 @@ textarea::placeholder{color:#B7A6BB}
   async function pickStore(){
     if(window.claude && window.claude.use){
       const db=await window.claude.use('db').catch(()=>null);
-      if(db){ store=dbStore(db); return; }
+      if(db){ store=dbStore(db); setTimeout(refreshMe,1500); return; }
     }
-    try{ setJar(await apiStore.count()); store=apiStore; setInterval(()=>{ if(!document.hidden && !screens[0].hidden) apiStore.count().then(setJar).catch(()=>{}); },5000); }
+    try{ setJar(await apiStore.count()); store=apiStore; refreshMe(); setInterval(()=>{ if(!document.hidden && !screens[0].hidden) apiStore.count().then(setJar).catch(()=>{}); },5000); }
     catch(e){ store=localStore; setJar(0); }
   }
+
+  /* ---------- 하루 한 번 (한국 시간 자정 기준, #shared 시연 모드는 제외) ---------- */
+  const today=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  function loadDay(){ try{ const d=JSON.parse(localStorage.getItem('fc-day')||'null'); if(d && d.date===today()) return d; }catch(e){} return {date:today()}; }
+  function saveDay(){ if(shared) return; try{ localStorage.setItem('fc-day',JSON.stringify(day)); }catch(e){} }
+  let day=loadDay();
+  function untilMidnight(){
+    const k=Date.now()+9*3600e3, left=Math.ceil(k/86400e3)*86400e3-k;
+    const h=Math.floor(left/3600e3), m=Math.floor(left%3600e3/60e3);
+    return (h?h+'시간 ':'')+m+'분';
+  }
+  function renderStart(){
+    if(!shared && day.date!==today()) day=loadDay();
+    const st=$('start'), note=$('dayNote'); st.disabled=false;
+    if(!shared && day.opened){
+      if(day.slip){ st.textContent='오늘의 쪽지 다시 보기'; } else { st.textContent='내일 다시 만나요'; st.disabled=true; }
+      note.innerHTML='오늘의 쿠키는 이미 열었어요.<br>'+untilMidnight()+' 뒤에 새 쿠키가 구워져요.'; note.hidden=false;
+    }else if(!shared && day.put){
+      st.textContent='내 쿠키 깨러 가기 ▶';
+      note.textContent='오늘의 한 줄은 이미 넣었어요. 이제 쿠키를 깰 차례예요.'; note.hidden=false;
+    }else{
+      st.textContent='시작하기 ▶'; note.hidden=true;
+    }
+  }
+  setInterval(()=>{ if(!screens[0].hidden) renderStart(); },30000);
+
+  /* ---------- 내 쿠키 소식 ---------- */
+  async function refreshMe(){
+    let r=null; try{ r=await store.me(); }catch(e){ return; }
+    if(!r) return;
+    if(!shared){
+      let changed=false;
+      if(r.putToday && !day.put){ day.put=true; changed=true; }
+      if(r.openedToday && !day.opened){ day.opened=true; changed=true; }
+      if(changed){ saveDay(); renderStart(); }
+    }
+    const el=$('mine');
+    if(!r.mine){ el.hidden=true; return; }
+    el.innerHTML = r.opened>0
+      ? '내가 넣은 쿠키가 <b>'+r.opened+'명</b>에게 열렸어요 ♥'
+      : '내가 넣은 쿠키가 누군가를 기다리고 있어요';
+    el.hidden=false;
+  }
+
+  renderStart();
   pickStore();
 
   /* ---------- 0 → 1 ---------- */
-  $('start').addEventListener('click',()=>{ show(1); setTimeout(()=>$('line').focus(),50); });
+  async function toCrack(){
+    let p=null; try{ p=await store.draw(justPut,seen); }catch(e){}
+    if(p && p.empty){ $('emptyMsg').textContent=''; show(4); return; }
+    prefetched=(p && !p.empty)?p:null; resetCrack(); show(3);
+  }
+  function showSaved(){
+    resetCrack(); show(3);
+    cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
+    $('slipText').textContent=day.slip.text; $('lucky').textContent=day.slip.lucky; $('serial').textContent=day.slip.serial;
+    $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false; $('share').hidden=false;
+    $('t2').textContent='오늘 받은 쪽지'; $('crackHint').textContent='내일은 또 다른 한 줄이 기다리고 있어요.';
+  }
+  $('start').addEventListener('click',()=>{
+    if(!shared && day.opened){ if(day.slip) showSaved(); return; }
+    if(!shared && day.put){ justPut=day.putId||null; toCrack(); return; }
+    show(1); setTimeout(()=>$('line').focus(),50);
+  });
 
   /* ---------- 1. 쓰기 ---------- */
   const line=$('line'), put=$('put');
@@ -300,8 +374,13 @@ textarea::placeholder{color:#B7A6BB}
     try{
       const d=await store.put(text);
       justPut=d.id; if(d.count!=null) setJar(d.count);
+      if(!shared){ day={date:today(),put:true,putId:d.id}; saveDay(); }
     }catch(e){
       put.disabled=false;
+      if(e && e.error==='already_put'){
+        day.put=true; saveDay(); line.value=''; $('putMsg').textContent='오늘의 한 줄은 이미 넣었어요. 쿠키를 깨러 갈게요!';
+        setTimeout(()=>{ $('putMsg').textContent=''; toCrack(); },1200); return;
+      }
       $('putMsg').textContent = e && e.error==='jar_full' ? '유리병이 가득 찼어요.' : '넣지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
       return;
     }
@@ -430,6 +509,10 @@ textarea::placeholder{color:#B7A6BB}
       $('crackHint').textContent='유리병에 아직 다른 사람의 쿠키가 없어요. 다음 사람이 넣고 나면 다시 두드려 주세요.'; $('actions').hidden=false;
       return;
     }
+    try{ await store.open(pick.id); }
+    catch(e){
+      if(e && e.error==='already_opened'){ day.opened=true; saveDay(); resetCrack(); renderStart(); show(0); return; }
+    }
     seen.push(pick.id);
     buzz([30,30,90]); crumbs(6); burst(); cookie.classList.add('split'); cookie.disabled=true; $('taps').hidden=true;
     setTimeout(()=>{
@@ -438,10 +521,11 @@ textarea::placeholder{color:#B7A6BB}
       $('serial').textContent='No.'+String(pick.no).padStart(3,'0');
       $('slip').hidden=false; $('after').hidden=false; $('actions').hidden=false; $('share').hidden=false; $('shareMsg').textContent='';
       $('t2').textContent='포춘쿠키가 깨졌어요!'; $('crackHint').textContent='모르는 누군가의 한 줄이 나왔어요.';
+      if(!shared){ day.opened=true; day.slip={text:pick.text,lucky:$('lucky').textContent,serial:$('serial').textContent}; saveDay(); }
     }, matchMedia('(prefers-reduced-motion: reduce)').matches?0:520);
   });
 
-  $('back').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
+  $('back').addEventListener('click',()=>{ resetCrack(); renderStart(); refreshMe(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
   $('recheck').addEventListener('click',async()=>{
     const b=$('recheck'); b.disabled=true; $('emptyMsg').textContent='유리병을 다시 뒤적이는 중…';
     let p=null; try{ p=await store.draw(justPut,seen); }catch(e){}
@@ -450,7 +534,7 @@ textarea::placeholder{color:#B7A6BB}
     if(p.empty){ $('emptyMsg').textContent='아직 새 쿠키가 없어요. 조금 뒤에 다시 확인해 주세요.'; return; }
     prefetched=p; resetCrack(); show(3);
   });
-  $('home').addEventListener('click',()=>{ resetCrack(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
+  $('home').addEventListener('click',()=>{ resetCrack(); renderStart(); refreshMe(); show(0); if(store===apiStore) apiStore.count().then(setJar).catch(()=>{}); });
 })();
 </script>
 
