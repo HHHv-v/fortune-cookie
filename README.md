@@ -92,7 +92,7 @@
 
 <table width="100%">
   <tr>
-    <td width="33%" align="center"><img src="docs/share-card.png" width="100%" alt="실제 참여자가 받은 공유 카드: 좋아하는 것을 계속 따라가세요 반드시 행복해집니다"></td>
+    <td width="33%" align="center"><img src="docs/share-card-1.png" width="100%" alt="실제 참여자가 받은 공유 카드: 좋아하는 것을 계속 따라가세요 반드시 행복해집니다"></td>
     <td width="33%" align="center"><img src="docs/share-card-2.png" width="100%" alt="실제 참여자가 받은 공유 카드: 힘들 땐 하늘을 봐"></td>
     <td width="33%" align="center"><img src="docs/share-card-3.png" width="100%" alt="실제 참여자가 받은 공유 카드: 우울할 땐 우사기 하입보이 50초부터 들어보세요"></td>
   </tr>
