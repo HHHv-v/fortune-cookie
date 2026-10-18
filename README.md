@@ -19,6 +19,11 @@
     <td align="center"><img src="docs/05-result.png" width="220" alt="쪽지 결과 화면"><br><sub>5. 쪽지</sub></td>
     <td align="center"><img src="docs/06-empty.png" width="220" alt="깰 쿠키 없음 화면"><br><sub>깰 쿠키가 없을 때</sub></td>
   </tr>
+  <tr>
+    <td align="center"><img src="docs/07-mine.png" width="220" alt="내 쿠키 소식과 내 쿠키 깨러 가기 화면"><br><sub>한 줄만 넣고 아직 못 깼을 때</sub></td>
+    <td align="center"><img src="docs/08-done.png" width="220" alt="오늘 참여를 마친 시작 화면"><br><sub>오늘 다 했을 때</sub></td>
+    <td align="center"><img src="docs/09-saved.png" width="220" alt="오늘 받은 쪽지 다시 보기 화면"><br><sub>오늘의 쪽지 다시 보기</sub></td>
+  </tr>
 </table>
 
 ---
